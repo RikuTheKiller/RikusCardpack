@@ -16,7 +16,7 @@ namespace RikusCardpack.Cards
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been setup.");
 
-            gun.bulletDamageMultiplier = 0.85f;
+            gun.bulletDamageMultiplier = 0.9f;
             gun.reloadTimeAdd = 1.5f;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -53,7 +53,7 @@ namespace RikusCardpack.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Rare;
+            return CardInfo.Rarity.Uncommon;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -71,7 +71,7 @@ namespace RikusCardpack.Cards
                 {
                     positive = false,
                     stat = "Damage",
-                    amount = "-15%",
+                    amount = "-10%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
 

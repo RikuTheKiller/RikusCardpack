@@ -19,7 +19,7 @@ namespace RikusCardpack.MonoBehaviours
         private const float _noRegenDuration = 10;
         private float _noRegenDurationLeft = 0;
         private float _maxHealth;
-        public float _stackingMultiplier = 1;
+        public float _stackingMultiplier = 0.9f;
         private HitEffects.InstaKillHitEffect _thisIKHE = null;
         private bool _ranOnce = false;
         private bool _isRunning = false;
@@ -46,7 +46,6 @@ namespace RikusCardpack.MonoBehaviours
             _g = g;
             _p = p;
             _ga = ga;
-            _stackingMultiplier -= 0.1f;
             _ranOnce = true;
 
             if (_b)
@@ -114,19 +113,21 @@ namespace RikusCardpack.MonoBehaviours
         }
         public void RunRemover()
         {
-            _b.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(_b.BlockAction, _onBlockAction);
-            if (_thisIKHE != null)
+            _stackingMultiplier += 0.1f;
+            if (_stackingMultiplier > 0.9f)
             {
-                Destroy(_thisIKHE);
+                _b.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(_b.BlockAction, _onBlockAction);
+                if (_thisIKHE != null)
+                {
+                    Destroy(_thisIKHE);
+                }
+                if (_noRegenDurationLeft > 0)
+                {
+                    _noRegenDurationLeft = 0;
+                    _cd.maxHealth = _maxHealth;
+                }
+                Destroy(this);
             }
-            if (_noRegenDurationLeft > 0)
-            {
-                _noRegenDurationLeft = 0;
-                _cd.maxHealth = _maxHealth;
-            }
-            Destroy(this);
-
-            return;
         }
     }
 }

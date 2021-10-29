@@ -45,17 +45,13 @@ namespace RikusCardpack.MonoBehaviours
 
         public void RunRemover()
         {
-            if (_ga.maxAmmo <= _givenAmmo)
+            _ga.maxAmmo -= _givenAmmo / _timesGet;
+            _timesGet -= 1;
+
+            if (_timesGet < 1)
             {
-                _ga.maxAmmo = 1;
-
                 Destroy(this);
-
-                return;
             }
-            _ga.maxAmmo -= _givenAmmo;
-
-            Destroy(this);
         }
     }
 }

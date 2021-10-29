@@ -18,17 +18,21 @@ namespace RikusCardpack.MonoBehaviours
         private float _damageToAdd = 0;
         private float _damageToAddHolder = 0;
         private float _givenDamage = 0;
+        private float _givenDamageHolder = 0;
         private float _lastPSpeedAdd = 0;
         private float _pSpeedToAdd = 0;
         private float _pSpeedToAddHolder = 0;
         private float _givenPSpeed = 0;
-        private float _stackDivider = 8;
+        private float _givenPSpeedHolder = 0;
+        private const float _damageDivider = 6;
+        private const float _pSpeedDivider = 4;
+        private float _stackMultiplier = 1;
         private const float _checkCooldown = 0.5f;
         public void RunAdder(Gun g)
         {
             if (_ranOnce)
             {
-                _stackDivider *= 0.85f;
+                _stackMultiplier += 1;
 
                 return;
             }
@@ -45,40 +49,48 @@ namespace RikusCardpack.MonoBehaviours
             else
             {
                 _checkCooldownLeft = _checkCooldown;
-                _damageToAdd = _g.damage / _stackDivider * _g.reloadTime;
+                _damageToAdd = _g.damage / _damageDivider * _g.reloadTime;
+                _damageToAdd *= _stackMultiplier;
                 _damageToAddHolder = _damageToAdd;
                 _damageToAdd -= _lastDamageAdd;
                 _lastDamageAdd = _damageToAddHolder;
                 _g.damage += _damageToAdd;
+                _givenDamageHolder += _damageToAddHolder;
                 _givenDamage += _damageToAdd;
                 if (_givenDamage < 0)
                 {
                     _g.damage -= _givenDamage;
-                    _lastDamageAdd -= _givenDamage;
+                    _lastDamageAdd -= _givenDamageHolder;
                     _givenDamage = 0;
+                    _givenDamageHolder = 0;
                 }
-                _pSpeedToAdd = _g.projectileSpeed / _stackDivider * _g.reloadTime;
+                _pSpeedToAdd = _g.projectileSpeed / _pSpeedDivider * _g.reloadTime;
+                _pSpeedToAdd *= _stackMultiplier;
                 _pSpeedToAddHolder = _pSpeedToAdd;
                 _pSpeedToAdd -= _lastPSpeedAdd;
                 _lastPSpeedAdd = _pSpeedToAddHolder;
                 _g.projectileSpeed += _pSpeedToAdd;
+                _givenPSpeedHolder += _pSpeedToAddHolder;
                 _givenPSpeed += _pSpeedToAdd;
                 if (_givenPSpeed < 0)
                 {
                     _g.projectileSpeed -= _givenPSpeed;
-                    _lastPSpeedAdd -= _givenPSpeed;
+                    _lastPSpeedAdd -= _givenPSpeedHolder;
                     _givenPSpeed = 0;
+                    _givenPSpeedHolder = 0;
                 }
             }
         }
         public void RunRemover()
         {
-            _g.damage -= _givenDamage;
-            _g.projectileSpeed -= _givenPSpeed;
+            _stackMultiplier -= 1;
+            if (_stackMultiplier < 1)
+            {
+                _g.damage -= _givenDamage;
+                _g.projectileSpeed -= _givenPSpeed;
 
-            Destroy(this);
-
-            return;
+                Destroy(this);
+            }
         }
     }
 }
