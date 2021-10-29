@@ -27,7 +27,7 @@ namespace RikusCardpack.MonoBehaviours
         private const float _damageDivider = 6;
         private const float _pSpeedDivider = 4;
         private float _stackMultiplier = 1;
-        private const float _checkCooldown = 0.5f;
+        private const float _checkCooldown = 0.2f;
         public void RunAdder(Gun g)
         {
             if (_ranOnce)
@@ -36,7 +36,6 @@ namespace RikusCardpack.MonoBehaviours
 
                 return;
             }
-
             _g = g;
             _ranOnce = true;
         }

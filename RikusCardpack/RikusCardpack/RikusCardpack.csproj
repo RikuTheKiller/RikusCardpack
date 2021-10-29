@@ -68,8 +68,10 @@
     <Compile Include="Cards\BadMath.cs" />
     <Compile Include="Cards\SniperLogic.cs" />
     <Compile Include="Cards\RiskyShot.cs" />
+    <Compile Include="Cards\Autoloader.cs" />
     <Compile Include="HitEffects\InstaKillHitEffect.cs" />
     <Compile Include="MonoBehaviours\BadMathEffect.cs" />
+    <Compile Include="MonoBehaviours\AutoloaderEffect.cs" />
     <Compile Include="MonoBehaviours\SniperLogicEffect.cs" />
     <Compile Include="MonoBehaviours\RiskyShotEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

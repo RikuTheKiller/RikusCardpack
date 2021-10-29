@@ -7,6 +7,7 @@ using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
 using System.Windows.Input;
+using ModdingUtils.Utils;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -40,7 +41,6 @@ namespace RikusCardpack.MonoBehaviours
 
                 return;
             }
-
             _cd = cd;
             _b = b;
             _g = g;
@@ -63,6 +63,12 @@ namespace RikusCardpack.MonoBehaviours
             if (_cooldownLeft > 0)
             {
                 _cooldownLeft -= Time.deltaTime;
+                if (!PlayerStatus.PlayerAliveAndSimulated(_p))
+                {
+                    _durationLeft = 0;
+                    _cooldownLeft = 0;
+                    _noRegenDurationLeft = 0;
+                }
             }
             if (_noRegenDurationLeft > 0)
             {
@@ -80,19 +86,22 @@ namespace RikusCardpack.MonoBehaviours
             if (_durationLeft > 0)
             {
                 _durationLeft -= Time.deltaTime;
-                if (_thisIKHE._hasHit && _isRunning)
+                if (PlayerStatus.PlayerAliveAndSimulated(_p))
                 {
-                    _thisIKHE._damagedPlayer.data.maxHealth *= _stackingMultiplier;
-                    _isRunning = false;
-                }
-                if (_durationLeft <= 0)
-                {
-                    if (!_thisIKHE._hasHit)
+                    if (_thisIKHE._hasHit && _isRunning)
                     {
-                        _maxHealth = _cd.maxHealth;
-                        _cd.maxHealth = 1;
-                        _cd.health = 1;
-                        _noRegenDurationLeft = _noRegenDuration;
+                        _thisIKHE._damagedPlayer.data.maxHealth *= _stackingMultiplier;
+                        _isRunning = false;
+                    }
+                    if (_durationLeft <= 0)
+                    {
+                        if (!_thisIKHE._hasHit)
+                        {
+                            _maxHealth = _cd.maxHealth;
+                            _cd.maxHealth = 1;
+                            _cd.health = 1;
+                            _noRegenDurationLeft = _noRegenDuration;
+                        }
                     }
                 }
             }
