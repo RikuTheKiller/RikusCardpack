@@ -51,6 +51,8 @@ namespace RikusCardpack.MonoBehaviours
 
             if (_timesGet < 1)
             {
+                _p.data.stats.OnReloadDoneAction -= OnReload;
+
                 Destroy(this);
             }
         }

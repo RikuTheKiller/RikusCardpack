@@ -19,7 +19,7 @@ namespace RikusCardpack
     {
         private const string ModId = "com.RikuTheKiller.RikusCardpack";
         private const string ModName = "Riku's Cardpack";
-        public const string Version = "1.1.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "1.2.0"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "RC";
         public static RikusCardpack instance { get; private set; }
 
@@ -36,6 +36,7 @@ namespace RikusCardpack
             CustomCard.BuildCard<RiskyShot>();
             CustomCard.BuildCard<SniperLogic>();
             CustomCard.BuildCard<Autoloader>();
+            CustomCard.BuildCard<PetrifyingShots>();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_checkCooldownLeft > 0)
             {
-                _checkCooldownLeft -= Time.deltaTime;
+                _checkCooldownLeft -= TimeHandler.deltaTime;
             }
             else
             {

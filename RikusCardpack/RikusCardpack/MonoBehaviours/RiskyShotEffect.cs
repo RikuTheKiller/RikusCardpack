@@ -48,11 +48,7 @@ namespace RikusCardpack.MonoBehaviours
             _ga = ga;
             _ranOnce = true;
 
-            if (_b)
-            {
-                _onBlockAction = new Action<BlockTrigger.BlockTriggerType>(OnBlockAction());
-                _b.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(_b.BlockAction, _onBlockAction);
-            }
+            _b.BlockAction += OnBlock;
         }
         void Start()
         {
@@ -62,7 +58,7 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_cooldownLeft > 0)
             {
-                _cooldownLeft -= Time.deltaTime;
+                _cooldownLeft -= TimeHandler.deltaTime;
                 if (!PlayerStatus.PlayerAliveAndSimulated(_p))
                 {
                     _durationLeft = 0;
@@ -72,7 +68,7 @@ namespace RikusCardpack.MonoBehaviours
             }
             if (_noRegenDurationLeft > 0)
             {
-                _noRegenDurationLeft -= Time.deltaTime;
+                _noRegenDurationLeft -= TimeHandler.deltaTime;
                 if (_cd.maxHealth > 1)
                 {
                     _cd.maxHealth = 1;
@@ -85,7 +81,7 @@ namespace RikusCardpack.MonoBehaviours
             }
             if (_durationLeft > 0)
             {
-                _durationLeft -= Time.deltaTime;
+                _durationLeft -= TimeHandler.deltaTime;
                 if (PlayerStatus.PlayerAliveAndSimulated(_p))
                 {
                     if (_thisIKHE._hasHit && _isRunning)
@@ -106,26 +102,23 @@ namespace RikusCardpack.MonoBehaviours
                 }
             }
         }
-        public Action<BlockTrigger.BlockTriggerType> OnBlockAction()
+        private void OnBlock(BlockTrigger.BlockTriggerType obj)
         {
-            return delegate (BlockTrigger.BlockTriggerType trigger)
+            if (_cooldownLeft <= 0 && _g.isReloading)
             {
-                if (_cooldownLeft <= 0 && _g.isReloading)
-                {
-                    _cooldownLeft = _cooldown;
-                    _ga.ReloadAmmo();
-                    _thisIKHE._hasHit = false;
-                    _durationLeft = _duration;
-                    _isRunning = true;
-                }
-            };
+                _cooldownLeft = _cooldown;
+                _ga.ReloadAmmo();
+                _thisIKHE._hasHit = false;
+                _durationLeft = _duration;
+                _isRunning = true;
+            }
         }
         public void RunRemover()
         {
             _stackingMultiplier += 0.1f;
             if (_stackingMultiplier > 0.9f)
             {
-                _b.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(_b.BlockAction, _onBlockAction);
+                _b.BlockAction -= OnBlock;
                 if (_thisIKHE != null)
                 {
                     Destroy(_thisIKHE);
