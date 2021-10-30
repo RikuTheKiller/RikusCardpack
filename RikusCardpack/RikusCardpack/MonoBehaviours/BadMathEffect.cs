@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
 using ModdingUtils.Utils;
+using UnboundLib.GameModes;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -16,6 +18,7 @@ namespace RikusCardpack.MonoBehaviours
         private Gun _g;
         private GunAmmo _ga;
         private bool _alreadyRan;
+        private bool _disable = false;
         private int _timesGet = 0;
         private int _givenAmmo = 0;
         public void RunAdder(Player p, Gun g, GunAmmo ga)
@@ -35,14 +38,29 @@ namespace RikusCardpack.MonoBehaviours
             _p.data.stats.OnReloadDoneAction += OnReload;
             _alreadyRan = true;
         }
+        void Start()
+        {
+            GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, OnPickStart);
+            GameModeManager.AddHook(GameModeHooks.HookPlayerPickEnd, OnPickEnd);
+        }
         public void OnReload(int obj)
         {
-            if (PlayerStatus.PlayerAliveAndSimulated(_p))
+            if (!_disable)
             {
                 _ga.maxAmmo += _timesGet;
                 _g.ammo += _timesGet;
                 _givenAmmo += _timesGet;
             }
+        }
+        private IEnumerator OnPickStart(IGameModeHandler gm)
+        {
+            _disable = true;
+            yield break;
+        }
+        private IEnumerator OnPickEnd(IGameModeHandler gm)
+        {
+            _disable = false;
+            yield break;
         }
         public void RunRemover()
         {

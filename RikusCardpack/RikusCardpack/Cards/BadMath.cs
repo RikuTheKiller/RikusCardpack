@@ -17,7 +17,7 @@ namespace RikusCardpack.Cards
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been setup.");
 
             gun.bulletDamageMultiplier = 0.9f;
-            gun.reloadTimeAdd = 1.5f;
+            gun.reloadTimeAdd = 1;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -45,7 +45,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "You're so bad at math that you manage to shove in an extra bullet every time you do a full reload, defying the laws of physics.";
+            return "You're so bad at math that you defy the laws of physics.";
         }
         protected override GameObject GetCardArt()
         {
@@ -79,7 +79,7 @@ namespace RikusCardpack.Cards
                 {
                     positive = false,
                     stat = "Reload Time",
-                    amount = "+1.5s",
+                    amount = "+1s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };

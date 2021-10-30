@@ -19,17 +19,16 @@ namespace RikusCardpack.MonoBehaviours
         private float _durationLeft = 0;
         private const float _noRegenDuration = 10;
         private float _noRegenDurationLeft = 0;
-        private float _maxHealth;
         public float _stackingMultiplier = 0.9f;
         private HitEffects.InstaKillHitEffect _thisIKHE = null;
         private bool _ranOnce = false;
         private bool _isRunning = false;
+        private bool _hasRevived = false;
         private Block _b;
         private Gun _g;
         private GunAmmo _ga;
         private CharacterData _cd;
         private Player _p;
-        private Action<BlockTrigger.BlockTriggerType> _onBlockAction;
         public void RunAdder(Player p, Block b, CharacterData cd, Gun g, GunAmmo ga)
         {
             if (_ranOnce)
@@ -49,6 +48,7 @@ namespace RikusCardpack.MonoBehaviours
             _ranOnce = true;
 
             _b.BlockAction += OnBlock;
+            _p.data.healthHandler.reviveAction += OnRevive;
         }
         void Start()
         {
@@ -59,48 +59,46 @@ namespace RikusCardpack.MonoBehaviours
             if (_cooldownLeft > 0)
             {
                 _cooldownLeft -= TimeHandler.deltaTime;
-                if (!PlayerStatus.PlayerAliveAndSimulated(_p))
-                {
-                    _durationLeft = 0;
-                    _cooldownLeft = 0;
-                    _noRegenDurationLeft = 0;
-                }
+                _durationLeft = 0;
+                _cooldownLeft = 0;
+                _noRegenDurationLeft = 0;
             }
             if (_noRegenDurationLeft > 0)
             {
                 _noRegenDurationLeft -= TimeHandler.deltaTime;
-                if (_cd.maxHealth > 1)
+                if (_cd.health > 1)
                 {
-                    _cd.maxHealth = 1;
-                }
-                if (_noRegenDurationLeft <= 0)
-                {
-                    _cd.maxHealth = _maxHealth;
-                    _cd.health = _cd.maxHealth;
+                    _cd.health = 1;
                 }
             }
             if (_durationLeft > 0)
             {
                 _durationLeft -= TimeHandler.deltaTime;
-                if (PlayerStatus.PlayerAliveAndSimulated(_p))
+                if (_thisIKHE._hasHit && _isRunning)
                 {
-                    if (_thisIKHE._hasHit && _isRunning)
+                    _thisIKHE._damagedPlayer.data.maxHealth *= _stackingMultiplier;
+                    _isRunning = false;
+                }
+                if (_durationLeft <= 0 && !_hasRevived)
+                {
+                    if (!_thisIKHE._hasHit)
                     {
-                        _thisIKHE._damagedPlayer.data.maxHealth *= _stackingMultiplier;
-                        _isRunning = false;
-                    }
-                    if (_durationLeft <= 0)
-                    {
-                        if (!_thisIKHE._hasHit)
-                        {
-                            _maxHealth = _cd.maxHealth;
-                            _cd.maxHealth = 1;
-                            _cd.health = 1;
-                            _noRegenDurationLeft = _noRegenDuration;
-                        }
+                        _cd.health = 1;
+                        _noRegenDurationLeft = _noRegenDuration;
                     }
                 }
+                if (_durationLeft <= 0)
+                {
+                    _isRunning = false;
+                }
             }
+        }
+        private void OnRevive()
+        {
+            _hasRevived = true;
+            _durationLeft = 0.05f;
+            _cooldownLeft = 0;
+            _noRegenDurationLeft = 0;
         }
         private void OnBlock(BlockTrigger.BlockTriggerType obj)
         {
@@ -122,11 +120,6 @@ namespace RikusCardpack.MonoBehaviours
                 if (_thisIKHE != null)
                 {
                     Destroy(_thisIKHE);
-                }
-                if (_noRegenDurationLeft > 0)
-                {
-                    _noRegenDurationLeft = 0;
-                    _cd.maxHealth = _maxHealth;
                 }
                 Destroy(this);
             }

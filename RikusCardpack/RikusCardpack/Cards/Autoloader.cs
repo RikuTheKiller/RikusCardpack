@@ -16,7 +16,7 @@ namespace RikusCardpack.Cards
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been setup.");
 
-            gun.bulletDamageMultiplier = 0.4f;
+            gun.bulletDamageMultiplier = 0.3f;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -44,7 +44,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Running out of ammo reloads your weapon instantly.";
+            return "Running out of ammo reloads your gun instantly.";
         }
         protected override GameObject GetCardArt()
         {
@@ -69,7 +69,7 @@ namespace RikusCardpack.Cards
                 {
                     positive = false,
                     stat = "Damage",
-                    amount = "-60%",
+                    amount = "-70%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };
