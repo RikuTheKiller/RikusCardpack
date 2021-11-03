@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
+using ModdingUtils.Extensions;
+using HarmonyLib;
 using ModdingUtils.MonoBehaviours;
 
 namespace RikusCardpack.MonoBehaviours
 {
-    class PetrifyHandler : MonoBehaviour
+    class PerseveranceEffect : MonoBehaviour
     {
-        private Player _p;
-        private StoneColor _stoneColor = null;
+        public Player _p;
+        private CharacterStatModifiers _cs;
+        private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
-        private bool _isRunning = true;
-        private bool _isAllowed = true;
+        private bool _isInvincible = false;
         private int _stackCount = 1;
-        private float _t = 0.05f;
-        private float _movementSpeedHolder = 0;
-        private float _jumpHolder = 0;
-        public void RunAdder(Player p)
+        private const float _duration = 0.2f;
+        private float _durationLeft = 0;
+        public void RunAdder(Player p, CharacterStatModifiers cs)
         {
             if (_ranOnce)
             {
@@ -30,69 +31,68 @@ namespace RikusCardpack.MonoBehaviours
                 return;
             }
             _p = p;
+            _cs = cs;
             _ranOnce = true;
 
             _p.data.healthHandler.reviveAction += OnRevive;
+            _p.data.stats.WasDealtDamageAction += OnDealtDamage;
         }
         void Update()
         {
-            if (_t > 0)
+            if (_durationLeft > 0)
             {
-                _t -= TimeHandler.deltaTime;
-                if (_isRunning)
+                _durationLeft -= TimeHandler.deltaTime;
+                if (_durationLeft <= 0)
                 {
-                    _movementSpeedHolder = _p.data.stats.movementSpeed;
-                    _jumpHolder = _p.data.stats.jump;
-                    _stoneColor = _p.gameObject.AddComponent<StoneColor>();
-                    _isRunning = false;
-                }
-                _p.data.stats.movementSpeed = 0;
-                _p.data.stats.jump = 0;
-                _p.data.input.silencedInput = true;
-                if (_t <= 0)
-                {
-                    _p.data.input.silencedInput = false;
-                    _p.data.stats.movementSpeed = _movementSpeedHolder;
-                    _p.data.stats.jump = _jumpHolder;
-                    _isAllowed = true;
-                    _isRunning = true;
-                    if (_stoneColor != null)
+                    _isInvincible = false;
+                    if (_purpleColor != null)
                     {
-                        Destroy(_stoneColor);
-                        _stoneColor = null;
+                        Destroy(_purpleColor);
+                        _purpleColor = null;
                     }
                 }
             }
-            if (_stackCount < 1 && _isAllowed)
+            if (_stackCount < 1 && !_isInvincible)
             {
                 _p.data.healthHandler.reviveAction -= OnRevive;
+                _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
 
                 Destroy(this);
             }
         }
         private void OnRevive()
         {
-            _t = 0.05f;
+            _durationLeft = 0.05f;
         }
-        public void PetrifyPlayer(float t)
+        public void OnDealtDamage(Vector2 damage, bool selfDamage)
         {
-            _t = t;
-            _isAllowed = false;
+            _purpleColor = _p.gameObject.GetOrAddComponent<PurpleColor>();
+            if (!_isInvincible)
+            {
+                _durationLeft = _duration * _stackCount;
+                _isInvincible = true;
+            }
+            else
+            {
+                _p.data.healthHandler.Heal(damage.magnitude);
+            }
         }
         public void RunRemover()
         {
             _stackCount -= 1;
-            if (_stackCount < 1 && _isAllowed)
+            if (_stackCount < 1 && !_isInvincible)
             {
                 _p.data.healthHandler.reviveAction -= OnRevive;
+                _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
 
                 Destroy(this);
             }
         }
     }
-    public class StoneColor : ReversibleEffect //Totally not copied from HDC :D
+    public class PurpleColor : ReversibleEffect //Totally not copied from HDC :D
     {
-        private readonly Color color = new Color(0.2f, 0.2f, 0.2f, 1f); //Dark Gray
+        private readonly Color colorMax = new Color(0.7f, 0f, 0.7f, 1f); //Lighter Purple
+        private readonly Color colorMin = new Color(0.3f, 0f, 0.3f, 1f); //Darker Purple
         private ReversibleColorEffect colorEffect = null;
 
         public override void OnOnEnable()
@@ -105,7 +105,8 @@ namespace RikusCardpack.MonoBehaviours
         public override void OnStart()
         {
             colorEffect = base.player.gameObject.AddComponent<ReversibleColorEffect>();
-            colorEffect.SetColor(this.color);
+            colorEffect.SetColorMin(colorMin);
+            colorEffect.SetColorMax(colorMax);
             colorEffect.SetLivesToEffect(1);
         }
         public override void OnOnDisable()

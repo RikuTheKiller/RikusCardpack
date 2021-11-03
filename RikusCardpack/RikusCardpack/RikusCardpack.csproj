@@ -40,6 +40,9 @@
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\Desktop\BepInEx\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>..\..\..\..\..\Desktop\BepInEx\BepInEx\core\BepInEx.Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="CardChoiceSpawnUniqueCardPatch">
       <HintPath>..\..\..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\ROUNDS\profiles\Patch Profile\BepInEx\plugins\Pykess-CardChoiceSpawnUniqueCardPatch\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
     </Reference>
@@ -69,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cards\BadMath.cs" />
+    <Compile Include="Cards\Perseverance.cs" />
     <Compile Include="Cards\PetrifyingShots.cs" />
     <Compile Include="Cards\SniperLogic.cs" />
     <Compile Include="Cards\RiskyShot.cs" />
@@ -77,6 +81,7 @@
     <Compile Include="HitEffects\InstaKillHitEffect.cs" />
     <Compile Include="MonoBehaviours\BadMathEffect.cs" />
     <Compile Include="MonoBehaviours\AutoloaderEffect.cs" />
+    <Compile Include="MonoBehaviours\PerseveranceEffect.cs" />
     <Compile Include="MonoBehaviours\PreventRecursion.cs" />
     <Compile Include="MonoBehaviours\PetrifyHandler.cs" />
     <Compile Include="MonoBehaviours\Template.cs" />

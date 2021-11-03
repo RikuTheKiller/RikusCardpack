@@ -9,43 +9,42 @@ using UnityEngine;
 
 namespace RikusCardpack.Cards
 {
-    class RiskyShot : CustomCard
+    class Perseverance : CustomCard
     {
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been setup.");
 
-            statModifiers.health = 0.75f;
+            gun.bulletDamageMultiplier = 0.85f;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been added to player {player.playerID}.");
 
-            var thisRiskyShotEffect = player.gameObject.GetOrAddComponent<MonoBehaviours.RiskyShotEffect>();
-            player.gameObject.GetOrAddComponent<HitEffects.InstaKillHitEffect>();
+            var thisPerseverance = player.gameObject.GetOrAddComponent<MonoBehaviours.PerseveranceEffect>();
 
-            thisRiskyShotEffect.RunAdder(player, block, data, gun, gunAmmo);
+            thisPerseverance.RunAdder(player, characterStats);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Run when the card is removed from the player
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been removed from player {player.playerID}.");
 
-            var thisRiskyShotEffect = player.gameObject.GetComponent<MonoBehaviours.RiskyShotEffect>();
-            if (thisRiskyShotEffect != null)
+            var thisPerseverance = player.gameObject.GetComponent<MonoBehaviours.PerseveranceEffect>();
+            if (thisPerseverance != null)
             {
-                thisRiskyShotEffect.RunRemover();
+                thisPerseverance.RunRemover();
             }
         }
         protected override string GetTitle()
         {
-            return "Risky Shot";
+            return "Perseverance";
         }
         protected override string GetDescription()
         {
-            return "Block while reloading to do a risky shot, giving you 3s to hit a shot that instakills and removes 10% max hp, otherwise you are set to 1 hp for at least 10s.";
+            return "Taking damage makes you invincible for 0.2s.";
         }
         protected override GameObject GetCardArt()
         {
@@ -61,23 +60,23 @@ namespace RikusCardpack.Cards
             {
                 new CardInfoStat()
                 {
-                    positive = false,
-                    stat = "Ability Cooldown",
-                    amount = "20s",
+                    positive = true,
+                    stat = "IFrames",
+                    amount = "+0.2s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = false,
-                    stat = "Health",
-                    amount = "-25%",
+                    stat = "Damage",
+                    amount = "-15%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.DestructiveRed;
+            return CardThemeColor.CardThemeColorType.EvilPurple;
         }
         public override string GetModName()
         {

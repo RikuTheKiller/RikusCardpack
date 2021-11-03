@@ -61,7 +61,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Hitting a player petrifies them.";
+            return "Your bullets petrify enemies.";
         }
         protected override GameObject GetCardArt()
         {

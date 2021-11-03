@@ -17,13 +17,14 @@ namespace RikusCardpack.MonoBehaviours
         private Player _p;
         private Gun _g;
         private GunAmmo _ga;
-        private bool _alreadyRan;
-        private bool _disable = false;
-        private int _timesGet = 0;
+        private bool _ranOnce;
+        private bool _happen = true;
+        private static bool _disable = true;
+        private int _timesGet = 1;
         private int _givenAmmo = 0;
         public void RunAdder(Player p, Gun g, GunAmmo ga)
         {
-            if (_alreadyRan)
+            if (_ranOnce)
             {
                 _timesGet += 1;
 
@@ -33,15 +34,25 @@ namespace RikusCardpack.MonoBehaviours
             _g = g;
             _ga = ga;
 
-            _timesGet += 1;
-
             _p.data.stats.OnReloadDoneAction += OnReload;
-            _alreadyRan = true;
+            _ranOnce = true;
         }
         void Start()
         {
-            GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, OnPickStart);
-            GameModeManager.AddHook(GameModeHooks.HookPlayerPickEnd, OnPickEnd);
+            _happen = false;
+            if (GM_Test.instance != null && GM_Test.instance.gameObject.activeInHierarchy)
+            {
+                _disable = false;
+            }
+        }
+        void Update()
+        {
+            if (!_happen)
+            {
+                GameModeManager.AddHook(GameModeHooks.HookPointStart, OnPointStart);
+                GameModeManager.AddHook(GameModeHooks.HookPointEnd, OnPointEnd);
+                _happen = true;
+            }
         }
         public void OnReload(int obj)
         {
@@ -52,14 +63,14 @@ namespace RikusCardpack.MonoBehaviours
                 _givenAmmo += _timesGet;
             }
         }
-        private IEnumerator OnPickStart(IGameModeHandler gm)
-        {
-            _disable = true;
-            yield break;
-        }
-        private IEnumerator OnPickEnd(IGameModeHandler gm)
+        static IEnumerator OnPointStart(IGameModeHandler gm)
         {
             _disable = false;
+            yield break;
+        }
+        static IEnumerator OnPointEnd(IGameModeHandler gm)
+        {
+            _disable = true;
             yield break;
         }
         public void RunRemover()
