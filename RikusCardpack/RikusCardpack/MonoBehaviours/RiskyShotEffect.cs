@@ -59,16 +59,15 @@ namespace RikusCardpack.MonoBehaviours
             if (_cooldownLeft > 0)
             {
                 _cooldownLeft -= TimeHandler.deltaTime;
-                _durationLeft = 0;
-                _cooldownLeft = 0;
-                _noRegenDurationLeft = 0;
             }
             if (_noRegenDurationLeft > 0)
             {
                 _noRegenDurationLeft -= TimeHandler.deltaTime;
-                if (_cd.health > 1)
+                if (_cd.health > 1.1f)
                 {
-                    _cd.health = 1;
+                    Vector2 _damage = new Vector2(Mathf.Sqrt(_cd.health * _cd.health) / 2 + Mathf.Sqrt(2) / 2, Mathf.Sqrt(_cd.health * _cd.health) / 2 + Mathf.Sqrt(2) / 2);
+                    Vector2 _position = new Vector2(_p.transform.position.x, _p.transform.position.y);
+                    _cd.healthHandler.DoDamage(_damage, _position, Color.white, null, null, false, false, true);
                 }
             }
             if (_durationLeft > 0)
@@ -86,17 +85,22 @@ namespace RikusCardpack.MonoBehaviours
                         _cd.health = 1;
                         _noRegenDurationLeft = _noRegenDuration;
                     }
+                    _isRunning = false;
                 }
-                if (_durationLeft <= 0)
+                else if (_durationLeft <= 0)
                 {
                     _isRunning = false;
+                    _hasRevived = false;
                 }
             }
         }
         private void OnRevive()
         {
-            _hasRevived = true;
-            _durationLeft = 0.05f;
+            if (_durationLeft > 0)
+            {
+                _hasRevived = true;
+                _durationLeft = 0.05f;
+            }
             _cooldownLeft = 0;
             _noRegenDurationLeft = 0;
         }
