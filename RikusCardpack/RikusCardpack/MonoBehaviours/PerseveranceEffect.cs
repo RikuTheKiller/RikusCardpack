@@ -18,10 +18,12 @@ namespace RikusCardpack.MonoBehaviours
         private CharacterStatModifiers _cs;
         private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
-        private bool _isInvincible = false;
         private int _stackCount = 1;
-        private const float _duration = 0.2f;
+        private const float _duration = 0.25f;
         private float _durationLeft = 0;
+        private float _defaultCooldown = 0;
+        private float _cooldownLeft = 0;
+        private float _additionalCooldown = 0;
         public void RunAdder(Player p, CharacterStatModifiers cs)
         {
             if (_ranOnce)
@@ -39,48 +41,63 @@ namespace RikusCardpack.MonoBehaviours
         }
         void Update()
         {
+            if (_cooldownLeft > 0)
+            {
+                _cooldownLeft -= TimeHandler.deltaTime;
+            }
             if (_durationLeft > 0)
             {
                 _durationLeft -= TimeHandler.deltaTime;
                 if (_durationLeft <= 0)
                 {
-                    _isInvincible = false;
                     if (_purpleColor != null)
                     {
                         Destroy(_purpleColor);
                         _purpleColor = null;
                     }
+                    _cooldownLeft = _additionalCooldown;
                 }
             }
-            if (_stackCount < 1 && !_isInvincible)
+            if (_stackCount < 1 && _durationLeft <= 0)
             {
                 _p.data.healthHandler.reviveAction -= OnRevive;
                 _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
 
                 Destroy(this);
             }
+            if (_purpleColor != null && _durationLeft <= 0)
+            {
+                Destroy(_purpleColor);
+                _purpleColor = null;
+            }
         }
         private void OnRevive()
         {
+            _additionalCooldown = 0;
             _durationLeft = 0.05f;
+            _cooldownLeft = 0;
         }
         public void OnDealtDamage(Vector2 damage, bool selfDamage)
         {
-            _purpleColor = _p.gameObject.GetOrAddComponent<PurpleColor>();
-            if (!_isInvincible)
-            {
-                _durationLeft = _duration * _stackCount;
-                _isInvincible = true;
-            }
-            else
+            if (_durationLeft > 0)
             {
                 _p.data.healthHandler.Heal(damage.magnitude);
+                if (_additionalCooldown < 1.5f)
+                {
+                    _additionalCooldown += 0.1f;
+                }
+            }
+            else if (_cooldownLeft <= 0)
+            {
+                _durationLeft = _duration * _stackCount;
+                _purpleColor = _p.gameObject.GetOrAddComponent<PurpleColor>();
+                _additionalCooldown = _defaultCooldown;
             }
         }
         public void RunRemover()
         {
             _stackCount -= 1;
-            if (_stackCount < 1 && !_isInvincible)
+            if (_stackCount < 1 && _durationLeft <= 0)
             {
                 _p.data.healthHandler.reviveAction -= OnRevive;
                 _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
