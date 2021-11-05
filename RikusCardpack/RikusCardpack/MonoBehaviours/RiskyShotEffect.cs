@@ -33,9 +33,9 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_ranOnce)
             {
-                if (_stackingMultiplier > 0.7f)
+                if (_stackingMultiplier > 0.55f)
                 {
-                    _stackingMultiplier -= 0.1f;
+                    _stackingMultiplier -= 0.15f;
                 }
 
                 return;
@@ -65,7 +65,7 @@ namespace RikusCardpack.MonoBehaviours
                 _noRegenDurationLeft -= TimeHandler.deltaTime;
                 if (_cd.health > 1.1f)
                 {
-                    Vector2 _damage = new Vector2(Mathf.Sqrt(_cd.health * _cd.health) / 2 + Mathf.Sqrt(2) / 2, Mathf.Sqrt(_cd.health * _cd.health) / 2 + Mathf.Sqrt(2) / 2);
+                    Vector2 _damage = new Vector2(Mathf.Sqrt(_cd.health * _cd.health) / 2 - Mathf.Sqrt(2) / 2, Mathf.Sqrt(_cd.health * _cd.health) / 2 - Mathf.Sqrt(2) / 2);
                     Vector2 _position = new Vector2(_p.transform.position.x, _p.transform.position.y);
                     _cd.healthHandler.DoDamage(_damage, _position, Color.white, null, null, false, false, true);
                 }
@@ -117,8 +117,8 @@ namespace RikusCardpack.MonoBehaviours
         }
         public void RunRemover()
         {
-            _stackingMultiplier += 0.1f;
-            if (_stackingMultiplier > 0.9f)
+            _stackingMultiplier += 0.15f;
+            if (_stackingMultiplier >= 1)
             {
                 _b.BlockAction -= OnBlock;
                 if (_thisIKHE != null)

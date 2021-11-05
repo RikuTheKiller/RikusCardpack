@@ -44,7 +44,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Taking damage makes you invincible for 0.25s and every hit taken while invincible increases cooldown by 0.1s up to 1.5s.";
+            return "Taking damage makes you invincible for 0.25s and every hit taken while invincible increases the cooldown by 0.1s up to 1.5s.";
         }
         protected override GameObject GetCardArt()
         {

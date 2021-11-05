@@ -45,7 +45,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Block while reloading to do a risky shot, giving you 3s to hit a shot that instakills and removes 10% max hp, otherwise you are set to 1 hp for at least 10s.";
+            return "Block while reloading to do a risky shot, giving you 3s to hit a shot that instakills and removes 15% max hp, otherwise you are set to 1 hp for at least 10s.";
         }
         protected override GameObject GetCardArt()
         {
