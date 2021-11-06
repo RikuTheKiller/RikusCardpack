@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using UnboundLib.Cards;
 using UnityEngine;
 using System.Windows.Input;
 using ModdingUtils.Utils;
+using UnboundLib.GameModes;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -24,6 +26,8 @@ namespace RikusCardpack.MonoBehaviours
         private bool _ranOnce = false;
         private bool _isRunning = false;
         private bool _hasRevived = false;
+        private bool _happen = true;
+        private static bool _forceDestroy = false;
         private Block _b;
         private Gun _g;
         private GunAmmo _ga;
@@ -52,10 +56,16 @@ namespace RikusCardpack.MonoBehaviours
         }
         void Start()
         {
+            _happen = false;
             _thisIKHE = _p.gameObject.GetOrAddComponent<HitEffects.InstaKillHitEffect>();
         }
         void Update()
         {
+            if (!_happen)
+            {
+                GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
+                _happen = true;
+            }
             if (_cooldownLeft > 0)
             {
                 _cooldownLeft -= TimeHandler.deltaTime;
@@ -93,6 +103,18 @@ namespace RikusCardpack.MonoBehaviours
                     _hasRevived = false;
                 }
             }
+            if (_forceDestroy)
+            {
+                if (_stackingMultiplier < 1)
+                {
+                    RunRemover();
+                }
+            }
+        }
+        static IEnumerator OnGameEnd(IGameModeHandler gm)
+        {
+            _forceDestroy = true;
+            yield break;
         }
         private void OnRevive()
         {

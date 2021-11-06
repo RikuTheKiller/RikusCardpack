@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using UnityEngine;
 using ModdingUtils.Extensions;
 using HarmonyLib;
 using ModdingUtils.MonoBehaviours;
+using UnboundLib.GameModes;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -18,8 +20,10 @@ namespace RikusCardpack.MonoBehaviours
         private CharacterStatModifiers _cs;
         private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
+        private bool _happen = true;
+        private static bool _forceDestroy = false;
         private int _stackCount = 1;
-        private const float _duration = 0.25f;
+        private const float _duration = 0.3f;
         private float _durationLeft = 0;
         private float _defaultCooldown = 0;
         private float _cooldownLeft = 0;
@@ -39,8 +43,17 @@ namespace RikusCardpack.MonoBehaviours
             _p.data.healthHandler.reviveAction += OnRevive;
             _p.data.stats.WasDealtDamageAction += OnDealtDamage;
         }
+        void Start()
+        {
+            _happen = false;
+        }
         void Update()
         {
+            if (!_happen)
+            {
+                GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
+                _happen = true;
+            }
             if (_cooldownLeft > 0)
             {
                 _cooldownLeft -= TimeHandler.deltaTime;
@@ -70,6 +83,18 @@ namespace RikusCardpack.MonoBehaviours
                 Destroy(_purpleColor);
                 _purpleColor = null;
             }
+            if (_forceDestroy)
+            {
+                if (_stackCount > 0)
+                {
+                    RunRemover();
+                }
+            }
+        }
+        static IEnumerator OnGameEnd(IGameModeHandler gm)
+        {
+            _forceDestroy = true;
+            yield break;
         }
         private void OnRevive()
         {
@@ -82,7 +107,7 @@ namespace RikusCardpack.MonoBehaviours
             if (_durationLeft > 0)
             {
                 _p.data.healthHandler.Heal(damage.magnitude);
-                if (_additionalCooldown < 1.5f)
+                if (_additionalCooldown < 1.4f)
                 {
                     _additionalCooldown += 0.1f;
                 }

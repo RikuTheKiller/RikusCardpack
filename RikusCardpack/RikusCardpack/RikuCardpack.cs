@@ -19,7 +19,7 @@ namespace RikusCardpack
     {
         private const string ModId = "com.RikuTheKiller.RikusCardpack";
         private const string ModName = "RikusCardpack";
-        public const string Version = "1.3.4"; // What version are we on (major.minor.patch)?
+        public const string Version = "1.3.5"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "RC";
         public static RikusCardpack instance { get; private set; }
 

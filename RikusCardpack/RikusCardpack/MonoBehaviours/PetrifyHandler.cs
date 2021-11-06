@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
 using ModdingUtils.MonoBehaviours;
+using UnboundLib.GameModes;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -17,6 +19,8 @@ namespace RikusCardpack.MonoBehaviours
         private bool _ranOnce = false;
         private bool _isRunning = true;
         private bool _isAllowed = true;
+        private bool _happen = true;
+        private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private float _t = 0.05f;
         private float _movementSpeedHolder = 0;
@@ -34,8 +38,17 @@ namespace RikusCardpack.MonoBehaviours
 
             _p.data.healthHandler.reviveAction += OnRevive;
         }
+        void Start()
+        {
+            _happen = false;
+        }
         void Update()
         {
+            if (!_happen)
+            {
+                GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
+                _happen = true;
+            }
             if (_t > 0)
             {
                 _t -= TimeHandler.deltaTime;
@@ -69,6 +82,18 @@ namespace RikusCardpack.MonoBehaviours
 
                 Destroy(this);
             }
+            if (_forceDestroy)
+            {
+                if (_stackCount > 0)
+                {
+                    RunRemover();
+                }
+            }
+        }
+        static IEnumerator OnGameEnd(IGameModeHandler gm)
+        {
+            _forceDestroy = true;
+            yield break;
         }
         private void OnRevive()
         {

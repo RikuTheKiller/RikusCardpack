@@ -19,6 +19,7 @@ namespace RikusCardpack.MonoBehaviours
         private GunAmmo _ga;
         private bool _ranOnce;
         private bool _happen = true;
+        private static bool _forceDestroy = false;
         private static bool _disable = true;
         private int _timesGet = 1;
         private int _givenAmmo = 0;
@@ -51,7 +52,15 @@ namespace RikusCardpack.MonoBehaviours
             {
                 GameModeManager.AddHook(GameModeHooks.HookPointStart, OnPointStart);
                 GameModeManager.AddHook(GameModeHooks.HookPointEnd, OnPointEnd);
+                GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
                 _happen = true;
+            }
+            if (_forceDestroy)
+            {
+                if (_timesGet > 0)
+                {
+                    RunRemover();
+                }
             }
         }
         public void OnReload(int obj)
@@ -71,6 +80,11 @@ namespace RikusCardpack.MonoBehaviours
         static IEnumerator OnPointEnd(IGameModeHandler gm)
         {
             _disable = true;
+            yield break;
+        }
+        static IEnumerator OnGameEnd(IGameModeHandler gm)
+        {
+            _forceDestroy = true;
             yield break;
         }
         public void RunRemover()
