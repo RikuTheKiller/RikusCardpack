@@ -45,7 +45,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Blocking gives you +50% speed and +25% jump for 1s.";
+            return "Blocking gives you +70% speed and +30% jump for 1.5s.";
         }
         protected override GameObject GetCardArt()
         {
