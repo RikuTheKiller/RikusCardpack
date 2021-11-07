@@ -61,20 +61,6 @@ namespace RikusCardpack.Cards
             {
                 new CardInfoStat()
                 {
-                    positive = true,
-                    stat = "Speed On Block",
-                    amount = "+50%",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
-                new CardInfoStat()
-                {
-                    positive = true,
-                    stat = "Jump On Block",
-                    amount = "+25%",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
-                new CardInfoStat()
-                {
                     positive = false,
                     stat = "Block Cooldown",
                     amount = "+0.25s",

@@ -68,6 +68,7 @@ namespace RikusCardpack.MonoBehaviours
             if (!_disable)
             {
                 _ga.maxAmmo += _timesGet;
+                _ga.ReDrawTotalBullets();
                 _g.ammo += _timesGet;
                 _givenAmmo += _timesGet;
             }

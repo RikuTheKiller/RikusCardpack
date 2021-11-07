@@ -17,6 +17,7 @@ namespace RikusCardpack.MonoBehaviours
         private bool _ranOnce = false;
         private bool _happen = true;
         private bool _isRunning = true;
+        private bool _skip = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 1;
@@ -29,7 +30,8 @@ namespace RikusCardpack.MonoBehaviours
                 {
                     _p.data.stats.movementSpeed /= 1.5f + _stackCount / 2;
                     _p.data.stats.jump /= 1.25f + _stackCount / 4;
-                    _durationLeft = 0;
+                    _durationLeft = 0.05f;
+                    _skip = true;
                 }
                 _stackCount += 1;
 
@@ -61,10 +63,15 @@ namespace RikusCardpack.MonoBehaviours
                     _p.data.stats.jump *= 1.25f + _stackCount / 4;
                     _isRunning = false;
                 }
-                if (_durationLeft <= 0)
+                if (_durationLeft <= 0 && !_skip)
                 {
                     _p.data.stats.movementSpeed /= 1.5f + _stackCount / 2;
                     _p.data.stats.jump /= 1.25f + _stackCount / 4;
+                    _isRunning = true;
+                }
+                else if (_durationLeft <= 0)
+                {
+                    _skip = false;
                     _isRunning = true;
                 }
             }
@@ -98,7 +105,8 @@ namespace RikusCardpack.MonoBehaviours
             {
                 _p.data.stats.movementSpeed /= 1.5f + _stackCount / 2;
                 _p.data.stats.jump /= 1.25f + _stackCount / 4;
-                _durationLeft = 0;
+                _durationLeft = 0.05f;
+                _skip = true;
             }
             _stackCount -= 1;
             if (_stackCount < 1)
