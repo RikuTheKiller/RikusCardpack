@@ -77,6 +77,7 @@
     <Compile Include="Cards\SniperLogic.cs" />
     <Compile Include="Cards\RiskyShot.cs" />
     <Compile Include="Cards\Autoloader.cs" />
+    <Compile Include="Cards\SugarRush.cs" />
     <Compile Include="HitEffects\PetrifyingHitEffect.cs" />
     <Compile Include="HitEffects\InstaKillHitEffect.cs" />
     <Compile Include="MonoBehaviours\BadMathEffect.cs" />
@@ -84,7 +85,8 @@
     <Compile Include="MonoBehaviours\PerseveranceEffect.cs" />
     <Compile Include="MonoBehaviours\PreventRecursion.cs" />
     <Compile Include="MonoBehaviours\PetrifyHandler.cs" />
-    <Compile Include="MonoBehaviours\Template.cs" />
+    <Compile Include="MonoBehaviours\SugarRushEffect.cs" />
+    <Compile Include="MonoBehaviours\TemplateEffect.cs" />
     <Compile Include="MonoBehaviours\SniperLogicEffect.cs" />
     <Compile Include="MonoBehaviours\RiskyShotEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

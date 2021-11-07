@@ -25,7 +25,7 @@ namespace RikusCardpack.Cards
 
             var thisSniperLogicEffect = player.gameObject.GetOrAddComponent<MonoBehaviours.SniperLogicEffect>();
 
-            thisSniperLogicEffect.RunAdder(gun);
+            thisSniperLogicEffect.RunAdder(gun, gunAmmo);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -44,7 +44,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Because of sniper logic, your bullets get stronger and faster the higher your reload time is. Don't question it.";
+            return "Due to sniper logic, every 1s of reload time gives you:";
         }
         protected override GameObject GetCardArt()
         {
@@ -52,7 +52,7 @@ namespace RikusCardpack.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Common;
+            return CardInfo.Rarity.Uncommon;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -61,15 +61,15 @@ namespace RikusCardpack.Cards
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Sniper Logic",
-                    amount = "+999%",
+                    stat = "Damage",
+                    amount = "+15",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
-                    positive = false,
-                    stat = "Health",
-                    amount = "-10%",
+                    positive = true,
+                    stat = "Default Projectile Speed",
+                    amount = "+33%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };

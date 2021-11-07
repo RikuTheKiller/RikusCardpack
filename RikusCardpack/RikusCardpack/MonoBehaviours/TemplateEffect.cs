@@ -11,7 +11,7 @@ using UnboundLib.GameModes;
 
 namespace RikusCardpack.MonoBehaviours
 {
-    class Template : MonoBehaviour
+    class TemplateEffect : MonoBehaviour
     {
         private bool _ranOnce = false;
         private bool _happen = true;

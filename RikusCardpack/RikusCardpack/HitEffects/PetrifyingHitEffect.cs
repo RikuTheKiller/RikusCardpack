@@ -12,7 +12,6 @@ namespace RikusCardpack.HitEffects
         private bool _ranOnce = false;
         private bool _happen = true;
         private static bool _forceDestroy = false;
-        private static bool _disable = true;
         private int _stackCount = 1;
         private float _t = 1;
         public void RunAdder()
