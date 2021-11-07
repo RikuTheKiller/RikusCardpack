@@ -117,7 +117,7 @@ namespace RikusCardpack.MonoBehaviours
     }
     public class StoneColor : ReversibleEffect //Totally not copied from HDC :D
     {
-        private readonly Color color = new Color(0.2f, 0.2f, 0.2f, 1f); //Dark Gray
+        private readonly Color color = new Color(0.3f, 0.3f, 0.3f, 1f); //Dark Gray
         private ReversibleColorEffect colorEffect = null;
 
         public override void OnOnEnable()
