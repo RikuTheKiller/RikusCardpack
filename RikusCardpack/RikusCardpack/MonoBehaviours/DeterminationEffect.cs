@@ -22,7 +22,7 @@ namespace RikusCardpack.MonoBehaviours
         private bool _happen = true;
         private bool _isRunning = true;
         private bool _skip = false;
-        private bool _skipRevive = false;
+        private bool _statsAdded = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 5;
@@ -78,7 +78,6 @@ namespace RikusCardpack.MonoBehaviours
                             new object[] { new Vector2(0, 1) }
                         );
                     });
-                    _skipRevive = true;
                     _isRunning = true;
                 }
                 else if (_durationLeft <= 0)
@@ -108,11 +107,11 @@ namespace RikusCardpack.MonoBehaviours
         }
         private void OnDealtDamage(Vector2 damage, bool selfDamage)
         {
-            if (_p.data.health - damage.magnitude <= 0 && _durationLeft <= 0 && _p.data.stats.remainingRespawns <= 0)
+            if (_p.data.health <= 0 && _durationLeft <= 0 && _p.data.stats.remainingRespawns <= 0)
             {
-                _p.data.healthHandler.Heal(_p.data.health - damage.magnitude + _p.data.maxHealth);
+                _p.data.healthHandler.Heal(_p.data.health + _p.data.maxHealth);
                 _redColor = _p.gameObject.GetOrAddComponent<RedColor>();
-                _durationLeft = _duration * _stackCount;
+                _durationLeft = _duration + (_stackCount - 1) * 2f;
             }
             if (_durationLeft > 0)
             {
@@ -121,30 +120,30 @@ namespace RikusCardpack.MonoBehaviours
         }
         private void OnRevive()
         {
-            if (!_skipRevive && _durationLeft > 0)
-            {
-                ReverseStats(true);
-            }
-            _skipRevive = false;
+            ReverseStats(true);
         }
         private void AddStats()
         {
-            _givenSpeed = _p.data.stats.movementSpeed;
-            _givenJump = _p.data.stats.jump;
-            _givenDamage = _p.data.weaponHandler.gun.damage;
-            _givenProjectileSpeed = _p.data.weaponHandler.gun.projectileSpeed;
-            _p.data.stats.movementSpeed *= 2f + (_stackCount - 1) * 1f;
-            _p.data.stats.jump *= 1.5f + (_stackCount - 1) * 0.5f;
-            _p.data.weaponHandler.gun.damage *= 1.5f + (_stackCount - 1) * 0.5f;
-            _p.data.weaponHandler.gun.projectileSpeed *= 1.5f + (_stackCount - 1) * 0.5f;
-            _givenSpeed = Mathf.Abs(_givenSpeed - _p.data.stats.movementSpeed);
-            _givenJump = Mathf.Abs(_givenJump - _p.data.stats.jump);
-            _givenDamage = Mathf.Abs(_givenDamage - _p.data.weaponHandler.gun.damage);
-            _givenProjectileSpeed = Mathf.Abs(_givenProjectileSpeed - _p.data.weaponHandler.gun.projectileSpeed);
+            if (!_statsAdded)
+            {
+                _givenSpeed = _p.data.stats.movementSpeed;
+                _givenJump = _p.data.stats.jump;
+                _givenDamage = _p.data.weaponHandler.gun.damage;
+                _givenProjectileSpeed = _p.data.weaponHandler.gun.projectileSpeed;
+                _p.data.stats.movementSpeed *= 2f;
+                _p.data.stats.jump *= 1.5f;
+                _p.data.weaponHandler.gun.damage *= 1.5f;
+                _p.data.weaponHandler.gun.projectileSpeed *= 1.5f;
+                _givenSpeed = Mathf.Abs(_givenSpeed - _p.data.stats.movementSpeed);
+                _givenJump = Mathf.Abs(_givenJump - _p.data.stats.jump);
+                _givenDamage = Mathf.Abs(_givenDamage - _p.data.weaponHandler.gun.damage);
+                _givenProjectileSpeed = Mathf.Abs(_givenProjectileSpeed - _p.data.weaponHandler.gun.projectileSpeed);
+                _statsAdded = true;
+            }
         }
         private void ReverseStats(bool skip = false)
         {
-            if (!_skip)
+            if (!_skip && _statsAdded)
             {
                 _p.data.stats.movementSpeed -= _givenSpeed;
                 _p.data.stats.jump -= _givenJump;
@@ -155,23 +154,22 @@ namespace RikusCardpack.MonoBehaviours
                     Destroy(_redColor);
                     _redColor = null;
                 }
+                _statsAdded = false;
             }
-            else
+            else if (_statsAdded)
             {
-                if (_durationLeft > 0)
+                _p.data.stats.movementSpeed -= _givenSpeed;
+                _p.data.stats.jump -= _givenJump;
+                _p.data.weaponHandler.gun.damage -= _givenDamage;
+                _p.data.weaponHandler.gun.projectileSpeed -= _givenProjectileSpeed;
+                if (_redColor != null)
                 {
-                    _p.data.stats.movementSpeed -= _givenSpeed;
-                    _p.data.stats.jump -= _givenJump;
-                    _p.data.weaponHandler.gun.damage -= _givenDamage;
-                    _p.data.weaponHandler.gun.projectileSpeed -= _givenProjectileSpeed;
-                    if (_redColor != null)
-                    {
-                        Destroy(_redColor);
-                        _redColor = null;
-                    }
-                    _durationLeft = 0.05f;
-                    _skip = true;
+                    Destroy(_redColor);
+                    _redColor = null;
                 }
+                _durationLeft = 0.05f;
+                _skip = true;
+                _statsAdded = false;
             }
         }
         static IEnumerator OnGameEnd(IGameModeHandler gm)

@@ -62,8 +62,8 @@ namespace RikusCardpack.Cards
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Duration",
-                    amount = "+5s",
+                    stat = "Duration On Stack",
+                    amount = "+2s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
