@@ -92,7 +92,7 @@
     <Compile Include="MonoBehaviours\SniperLogicEffect.cs" />
     <Compile Include="MonoBehaviours\RiskyShotEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RikuCardpack.cs" />
+    <Compile Include="RikusCardpack.cs" />
     <Compile Include="Cards\Template.cs" />
   </ItemGroup>
   <ItemGroup />
