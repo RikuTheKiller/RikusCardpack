@@ -14,6 +14,7 @@ namespace RikusCardpack.MonoBehaviours
     class SugarRushEffect : MonoBehaviour
     {
         private Player _p;
+        private CharacterStatModifiers _cs;
         private bool _ranOnce = false;
         private bool _happen = true;
         private bool _isRunning = true;
@@ -24,14 +25,14 @@ namespace RikusCardpack.MonoBehaviours
         private float _durationLeft = 0;
         private float _givenSpeed = 0;
         private float _givenJump = 0;
-        public void RunAdder(Player p)
+        public void RunAdder(Player p, CharacterStatModifiers cs)
         {
             if (_ranOnce)
             {
                 if (_durationLeft > 0)
                 {
-                    _p.data.stats.movementSpeed -= _givenSpeed;
-                    _p.data.stats.jump -= _givenJump;
+                    _cs.movementSpeed -= _givenSpeed;
+                    _cs.jump -= _givenJump;
                     _durationLeft = 0.05f;
                     _skip = true;
                 }
@@ -40,6 +41,7 @@ namespace RikusCardpack.MonoBehaviours
                 return;
             }
             _p = p;
+            _cs = cs;
             _ranOnce = true;
 
             _p.data.block.BlockAction += OnBlock;
@@ -61,18 +63,18 @@ namespace RikusCardpack.MonoBehaviours
                 _durationLeft -= TimeHandler.deltaTime;
                 if (_isRunning)
                 {
-                    _givenSpeed = _p.data.stats.movementSpeed;
-                    _givenJump = _p.data.stats.jump;
-                    _p.data.stats.movementSpeed *= 1.7f + (_stackCount - 1) * 0.7f;
-                    _p.data.stats.jump *= 1.3f + (_stackCount - 1) * 0.3f;
-                    _givenSpeed = Mathf.Abs(_givenSpeed - _p.data.stats.movementSpeed);
-                    _givenJump = Mathf.Abs(_givenJump - _p.data.stats.jump);
+                    _givenSpeed = _cs.movementSpeed;
+                    _givenJump = _cs.jump;
+                    _cs.movementSpeed *= 1.7f + (_stackCount - 1) * 0.7f;
+                    _cs.jump *= 1.3f + (_stackCount - 1) * 0.3f;
+                    _givenSpeed = Mathf.Abs(_givenSpeed - _cs.movementSpeed);
+                    _givenJump = Mathf.Abs(_givenJump - _cs.jump);
                     _isRunning = false;
                 }
                 if (_durationLeft <= 0 && !_skip)
                 {
-                    _p.data.stats.movementSpeed -= _givenSpeed;
-                    _p.data.stats.jump -= _givenJump;
+                    _cs.movementSpeed -= _givenSpeed;
+                    _cs.jump -= _givenJump;
                     _isRunning = true;
                 }
                 else if (_durationLeft <= 0)
@@ -97,8 +99,8 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_durationLeft > 0)
             {
-                _p.data.stats.movementSpeed -= _givenSpeed;
-                _p.data.stats.jump -= _givenJump;
+                _cs.movementSpeed -= _givenSpeed;
+                _cs.jump -= _givenJump;
                 _durationLeft = 0.05f;
                 _skip = true;
             }
@@ -112,8 +114,8 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_durationLeft > 0)
             {
-                _p.data.stats.movementSpeed -= _givenSpeed;
-                _p.data.stats.jump -= _givenJump;
+                _cs.movementSpeed -= _givenSpeed;
+                _cs.jump -= _givenJump;
                 _durationLeft = 0.05f;
                 _skip = true;
             }

@@ -26,7 +26,7 @@ namespace RikusCardpack.Cards
 
             var thisEffect = player.gameObject.GetOrAddComponent<DeterminationEffect>();
 
-            thisEffect.RunAdder(player, gunAmmo);
+            thisEffect.RunAdder(player, gunAmmo, characterStats, gun, block);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -45,7 +45,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Your last death causes you to have a last stand for 5s.";
+            return "Your last death causes you to have a last stand for 4s.";
         }
         protected override GameObject GetCardArt()
         {

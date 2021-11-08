@@ -17,7 +17,7 @@ namespace RikusCardpack.MonoBehaviours
     {
         private const float _cooldown = 20;
         private float _cooldownLeft = 0;
-        private const float _duration = 3;
+        private const float _duration = 2;
         private float _durationLeft = 0;
         private const float _noRegenDuration = 10;
         private float _noRegenDurationLeft = 0;

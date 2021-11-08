@@ -26,7 +26,7 @@ namespace RikusCardpack.Cards
 
             var thisEffect = player.gameObject.GetOrAddComponent<SugarRushEffect>();
 
-            thisEffect.RunAdder(player);
+            thisEffect.RunAdder(player, characterStats);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
