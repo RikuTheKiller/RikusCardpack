@@ -67,8 +67,8 @@ namespace RikusCardpack.MonoBehaviours
                     _givenJump = _cs.jump;
                     _cs.movementSpeed *= 1.7f + (_stackCount - 1) * 0.7f;
                     _cs.jump *= 1.3f + (_stackCount - 1) * 0.3f;
-                    _givenSpeed = Mathf.Abs(_givenSpeed - _cs.movementSpeed);
-                    _givenJump = Mathf.Abs(_givenJump - _cs.jump);
+                    _givenSpeed = (_givenSpeed - _cs.movementSpeed) * -1;
+                    _givenJump = (_givenJump - _cs.jump) * -1;
                     _isRunning = false;
                 }
                 if (_durationLeft <= 0 && !_skip)

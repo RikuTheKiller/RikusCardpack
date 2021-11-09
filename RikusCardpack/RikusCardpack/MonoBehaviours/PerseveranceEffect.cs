@@ -21,10 +21,11 @@ namespace RikusCardpack.MonoBehaviours
         private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
         private bool _happen = true;
+        public bool _skipDetermination = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 0.3f;
-        private float _durationLeft = 0;
+        internal float _durationLeft = 0;
         private float _defaultCooldown = 0;
         private float _cooldownLeft = 0;
         private float _additionalCooldown = 0;
@@ -114,6 +115,7 @@ namespace RikusCardpack.MonoBehaviours
             }
             else if (_cooldownLeft <= 0)
             {
+                _skipDetermination = true;
                 _durationLeft = _duration * _stackCount;
                 _purpleColor = _p.gameObject.GetOrAddComponent<PurpleColor>();
                 _additionalCooldown = _defaultCooldown;
@@ -133,7 +135,7 @@ namespace RikusCardpack.MonoBehaviours
     }
     public class PurpleColor : ReversibleEffect //Totally not copied from HDC :D
     {
-        private readonly Color colorMax = new Color(0.7f, 0f, 0.7f, 1f); //Lighter Purple
+        private readonly Color colorMax = new Color(0.6f, 0f, 0.6f, 1f); //Lighter Purple
         private readonly Color colorMin = new Color(0.3f, 0f, 0.3f, 1f); //Darker Purple
         private ReversibleColorEffect colorEffect = null;
 

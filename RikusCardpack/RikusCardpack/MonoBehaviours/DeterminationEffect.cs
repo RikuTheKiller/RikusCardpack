@@ -21,11 +21,13 @@ namespace RikusCardpack.MonoBehaviours
         private Gun _g;
         private Block _b;
         private RedColor _redColor = null;
+        private PerseveranceEffect _thisPerseveranceEffect = null;
         private bool _ranOnce = false;
         private bool _happen = true;
         private bool _isRunning = true;
         private bool _skip = false;
         private bool _statsAdded = false;
+        private bool _skipDealt = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 4f;
@@ -37,6 +39,7 @@ namespace RikusCardpack.MonoBehaviours
         private float _givenProjectileSpeed = 0;
         private float _givenBlockSpeed = 0;
         private float _givenAttackSpeed = 0;
+        private float _givenReloadSpeed = 0;
         public void RunAdder(Player p, GunAmmo ga, CharacterStatModifiers cs, Gun g, Block b)
         {
             if (_ranOnce)
@@ -95,17 +98,6 @@ namespace RikusCardpack.MonoBehaviours
                     _skip = false;
                 }
             }
-            if (_durationLeft > 0 && _g.ammo < _ga.maxAmmo)
-            {
-                if (_g.ammo > 0)
-                {
-                    _g.ammo = _ga.maxAmmo;
-                }
-                else
-                {
-                    _ga.ReloadAmmo(false);
-                }
-            }
             if (!_statsAdded && _durationLeft > 0 && !_skip)
             {
                 _durationLeft = 0.05f;
@@ -121,16 +113,27 @@ namespace RikusCardpack.MonoBehaviours
         }
         private void OnDealtDamage(Vector2 damage, bool selfDamage)
         {
-            if (_p.data.health <= 0 && _durationLeft <= 0 && _p.data.stats.remainingRespawns <= 0)
+            _thisPerseveranceEffect = _p.gameObject.GetComponent<PerseveranceEffect>();
+            if (_thisPerseveranceEffect != null && _thisPerseveranceEffect._durationLeft > 0 && !_thisPerseveranceEffect._skipDetermination)
+            {
+                _skipDealt = true;
+            }
+            if (_p.data.health <= 0 && _durationLeft <= 0 && _p.data.stats.remainingRespawns <= 0 && !_skipDealt)
             {
                 _p.data.healthHandler.Heal(_p.data.health + _p.data.maxHealth);
                 _redColor = _p.gameObject.GetOrAddComponent<RedColor>();
                 _durationLeft = _duration + (_stackCount - 1) * _durationOnStack;
             }
-            if (_durationLeft > 0)
+            else if (_durationLeft > 0)
             {
                 _p.data.healthHandler.Heal(damage.magnitude * 0.5f);
             }
+            if (_thisPerseveranceEffect != null && _thisPerseveranceEffect._durationLeft > 0 && _thisPerseveranceEffect._skipDetermination)
+            {
+                _thisPerseveranceEffect._skipDetermination = false;
+            }
+            _thisPerseveranceEffect = null;
+            _skipDealt = false;
         }
         private void OnRevive()
         {
@@ -150,18 +153,21 @@ namespace RikusCardpack.MonoBehaviours
                 _givenProjectileSpeed = _g.projectileSpeed;
                 _givenBlockSpeed = _b.cdMultiplier;
                 _givenAttackSpeed = _g.attackSpeedMultiplier;
+                _givenReloadSpeed = _ga.reloadTimeMultiplier;
                 _cs.movementSpeed *= 2f;
                 _cs.jump *= 1.5f;
-                _g.damage *= 1.5f;
+                _g.bulletDamageMultiplier *= 1.5f;
                 _g.projectileSpeed *= 1.5f;
                 _b.cdMultiplier *= 0.5f;
                 _g.attackSpeedMultiplier *= 1.3f;
+                _ga.reloadTimeMultiplier *= 0.5f;
                 _givenSpeed = (_givenSpeed - _cs.movementSpeed) * -1;
                 _givenJump = (_givenJump - _cs.jump) * -1;
-                _givenDamage = (_givenDamage - _g.damage) * -1;
+                _givenDamage = (_givenDamage - _g.bulletDamageMultiplier) * -1;
                 _givenProjectileSpeed = (_givenProjectileSpeed - _g.projectileSpeed) * -1;
                 _givenBlockSpeed = (_givenBlockSpeed - _b.cdMultiplier) * -1;
                 _givenAttackSpeed = (_givenAttackSpeed - _g.attackSpeedMultiplier) * -1;
+                _givenReloadSpeed = (_givenReloadSpeed - _ga.reloadTimeMultiplier) * -1;
                 _statsAdded = true;
             }
         }
@@ -171,10 +177,11 @@ namespace RikusCardpack.MonoBehaviours
             {
                 _cs.movementSpeed -= _givenSpeed;
                 _cs.jump -= _givenJump;
-                _g.damage -= _givenDamage;
+                _g.bulletDamageMultiplier -= _givenDamage;
                 _g.projectileSpeed -= _givenProjectileSpeed;
                 _b.cdMultiplier -= _givenBlockSpeed;
                 _g.attackSpeedMultiplier -= _givenAttackSpeed;
+                _ga.reloadTimeMultiplier -= _givenReloadSpeed;
                 if (_redColor != null)
                 {
                     Destroy(_redColor);
@@ -186,10 +193,11 @@ namespace RikusCardpack.MonoBehaviours
             {
                 _cs.movementSpeed -= _givenSpeed;
                 _cs.jump -= _givenJump;
-                _g.damage -= _givenDamage;
+                _g.bulletDamageMultiplier -= _givenDamage;
                 _g.projectileSpeed -= _givenProjectileSpeed;
                 _b.cdMultiplier -= _givenBlockSpeed;
                 _g.attackSpeedMultiplier -= _givenAttackSpeed;
+                _ga.reloadTimeMultiplier -= _givenReloadSpeed;
                 if (_redColor != null)
                 {
                     Destroy(_redColor);

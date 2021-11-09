@@ -22,8 +22,6 @@ namespace RikusCardpack.MonoBehaviours
         private float _lastReloadTime = 0;
         private float _givenDamage = 0;
         private float _givenProjectileSpeed = 0;
-        private const int _damageMultiplier = 15;
-        private const int _projectileSpeedDivider = 3;
         private float _reloadTime = 0;
         public void RunAdder(Gun g, GunAmmo ga)
         {
@@ -56,15 +54,17 @@ namespace RikusCardpack.MonoBehaviours
             if (_lastReloadTime != (_ga.reloadTime + _ga.reloadTimeAdd) * _ga.reloadTimeMultiplier)
             {
                 _reloadTime = (_ga.reloadTime + _ga.reloadTimeAdd) * _ga.reloadTimeMultiplier;
-                _g.damage += (_reloadTime - _lastReloadTime) * _damageMultiplier * _stackCount / 55;
-                _givenDamage += (_reloadTime - _lastReloadTime) * _damageMultiplier * _stackCount / 55;
+                _givenDamage = _g.bulletDamageMultiplier;
+                _g.bulletDamageMultiplier += (_reloadTime - _lastReloadTime) * 15f * _stackCount / 55 / _g.damage;
+                _givenDamage = (_givenDamage - _g.bulletDamageMultiplier) * -1;
                 if (_givenDamage < 0)
                 {
                     _g.damage -= _givenDamage;
                     _givenDamage = 0;
                 }
-                _g.projectileSpeed += (_reloadTime - _lastReloadTime) * _stackCount / _projectileSpeedDivider;
-                _givenProjectileSpeed += (_reloadTime - _lastReloadTime) * _stackCount / _projectileSpeedDivider;
+                _givenProjectileSpeed = _g.projectileSpeed;
+                _g.projectileSpeed += (_reloadTime - _lastReloadTime) * _stackCount * 0.333f;
+                _givenProjectileSpeed = (_givenProjectileSpeed - _g.projectileSpeed) * -1;
                 if (_givenProjectileSpeed < 0)
                 {
                     _g.projectileSpeed -= _givenProjectileSpeed;
