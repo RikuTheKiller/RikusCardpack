@@ -20,6 +20,7 @@ namespace RikusCardpack.MonoBehaviours
         private CharacterStatModifiers _cs;
         private Gun _g;
         private Block _b;
+        private CharacterData _cd;
         private RedColor _redColor = null;
         private PerseveranceEffect _thisPerseveranceEffect = null;
         private bool _ranOnce = false;
@@ -40,7 +41,7 @@ namespace RikusCardpack.MonoBehaviours
         private float _givenBlockSpeed = 0;
         private float _givenAttackSpeed = 0;
         private float _givenReloadSpeed = 0;
-        public void RunAdder(Player p, GunAmmo ga, CharacterStatModifiers cs, Gun g, Block b)
+        public void RunAdder(Player p, GunAmmo ga, CharacterStatModifiers cs, Gun g, Block b, CharacterData cd)
         {
             if (_ranOnce)
             {
@@ -53,6 +54,7 @@ namespace RikusCardpack.MonoBehaviours
             _cs = cs;
             _g = g;
             _b = b;
+            _cd = cd;
             _ranOnce = true;
 
             _p.data.stats.WasDealtDamageAction += OnDealtDamage;
@@ -86,7 +88,7 @@ namespace RikusCardpack.MonoBehaviours
                             "RPCA_Die",
                             BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
                             null,
-                            _p.data.healthHandler,
+                            _cd.healthHandler,
                             new object[] { new Vector2(0, 1) }
                         );
                     });
@@ -118,15 +120,15 @@ namespace RikusCardpack.MonoBehaviours
             {
                 _skipDealt = true;
             }
-            if (_p.data.health <= 0 && _durationLeft <= 0 && _p.data.stats.remainingRespawns <= 0 && !_skipDealt)
+            if (_cd.health <= 0 && _durationLeft <= 0 && _cs.remainingRespawns <= 0 && !_skipDealt)
             {
-                _p.data.healthHandler.Heal(_p.data.health + _p.data.maxHealth);
+                _cd.healthHandler.Heal(_cd.health * -1 + _cd.maxHealth);
                 _redColor = _p.gameObject.GetOrAddComponent<RedColor>();
                 _durationLeft = _duration + (_stackCount - 1) * _durationOnStack;
             }
             else if (_durationLeft > 0)
             {
-                _p.data.healthHandler.Heal(damage.magnitude * 0.5f);
+                _cd.healthHandler.Heal(damage.magnitude * 0.5f);
             }
             if (_thisPerseveranceEffect != null && _thisPerseveranceEffect._durationLeft > 0 && _thisPerseveranceEffect._skipDetermination)
             {
@@ -219,8 +221,8 @@ namespace RikusCardpack.MonoBehaviours
             if (_stackCount < 1)
             {
                 ReverseStats(true);
-                _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
-                _p.data.healthHandler.reviveAction -= OnRevive;
+                _cs.WasDealtDamageAction -= OnDealtDamage;
+                _cd.healthHandler.reviveAction -= OnRevive;
 
                 Destroy(this);
             }

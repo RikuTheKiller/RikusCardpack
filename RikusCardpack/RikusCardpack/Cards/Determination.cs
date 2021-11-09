@@ -26,7 +26,7 @@ namespace RikusCardpack.Cards
 
             var thisEffect = player.gameObject.GetOrAddComponent<DeterminationEffect>();
 
-            thisEffect.RunAdder(player, gunAmmo, characterStats, gun, block);
+            thisEffect.RunAdder(player, gunAmmo, characterStats, gun, block, data);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

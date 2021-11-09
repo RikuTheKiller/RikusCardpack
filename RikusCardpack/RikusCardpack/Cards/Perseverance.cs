@@ -25,7 +25,7 @@ namespace RikusCardpack.Cards
 
             var thisPerseverance = player.gameObject.GetOrAddComponent<MonoBehaviours.PerseveranceEffect>();
 
-            thisPerseverance.RunAdder(player, characterStats);
+            thisPerseverance.RunAdder(player, characterStats, data);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

@@ -51,7 +51,7 @@ namespace RikusCardpack.MonoBehaviours
             _ga = ga;
             _ranOnce = true;
 
-            _b.BlockAction += OnBlock;
+            _p.data.block.BlockAction += OnBlock;
             _p.data.healthHandler.reviveAction += OnRevive;
         }
         void Start()

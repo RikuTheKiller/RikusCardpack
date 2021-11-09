@@ -18,6 +18,7 @@ namespace RikusCardpack.MonoBehaviours
     {
         public Player _p;
         private CharacterStatModifiers _cs;
+        private CharacterData _cd;
         private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
         private bool _happen = true;
@@ -29,7 +30,7 @@ namespace RikusCardpack.MonoBehaviours
         private float _defaultCooldown = 0;
         private float _cooldownLeft = 0;
         private float _additionalCooldown = 0;
-        public void RunAdder(Player p, CharacterStatModifiers cs)
+        public void RunAdder(Player p, CharacterStatModifiers cs, CharacterData cd)
         {
             if (_ranOnce)
             {
@@ -39,6 +40,7 @@ namespace RikusCardpack.MonoBehaviours
             }
             _p = p;
             _cs = cs;
+            _cd = cd;
             _ranOnce = true;
 
             _p.data.healthHandler.reviveAction += OnRevive;
@@ -74,8 +76,8 @@ namespace RikusCardpack.MonoBehaviours
             }
             if (_stackCount < 1 && _durationLeft <= 0)
             {
-                _p.data.healthHandler.reviveAction -= OnRevive;
-                _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
+                _cd.healthHandler.reviveAction -= OnRevive;
+                _cs.WasDealtDamageAction -= OnDealtDamage;
 
                 Destroy(this);
             }
@@ -107,7 +109,7 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_durationLeft > 0)
             {
-                _p.data.healthHandler.Heal(damage.magnitude);
+                _cd.healthHandler.Heal(damage.magnitude);
                 if (_additionalCooldown < 1.4f)
                 {
                     _additionalCooldown += 0.1f;
@@ -126,8 +128,8 @@ namespace RikusCardpack.MonoBehaviours
             _stackCount -= 1;
             if (_stackCount < 1 && _durationLeft <= 0)
             {
-                _p.data.healthHandler.reviveAction -= OnRevive;
-                _p.data.stats.WasDealtDamageAction -= OnDealtDamage;
+                _cd.healthHandler.reviveAction -= OnRevive;
+                _cs.WasDealtDamageAction -= OnDealtDamage;
 
                 Destroy(this);
             }

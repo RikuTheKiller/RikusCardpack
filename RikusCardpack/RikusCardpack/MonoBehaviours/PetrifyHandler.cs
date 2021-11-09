@@ -15,6 +15,8 @@ namespace RikusCardpack.MonoBehaviours
     class PetrifyHandler : MonoBehaviour
     {
         private Player _p;
+        private CharacterData _cd;
+        private CharacterStatModifiers _cs;
         private StoneColor _stoneColor = null;
         private bool _ranOnce = false;
         private bool _isRunning = true;
@@ -47,6 +49,8 @@ namespace RikusCardpack.MonoBehaviours
             if (!_happen)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
+                _cd = _p.GetComponent<CharacterData>();
+                _cs = _p.GetComponent<CharacterStatModifiers>();
                 _happen = true;
             }
             if (_t > 0)
@@ -59,14 +63,14 @@ namespace RikusCardpack.MonoBehaviours
                     _stoneColor = _p.gameObject.AddComponent<StoneColor>();
                     _isRunning = false;
                 }
-                _p.data.stats.movementSpeed = 0;
-                _p.data.stats.jump = 0;
-                _p.data.input.silencedInput = true;
+                _cs.movementSpeed = 0;
+                _cs.jump = 0;
+                _cd.input.silencedInput = true;
                 if (_t <= 0)
                 {
-                    _p.data.input.silencedInput = false;
-                    _p.data.stats.movementSpeed = _movementSpeedHolder;
-                    _p.data.stats.jump = _jumpHolder;
+                    _cd.input.silencedInput = false;
+                    _cs.movementSpeed = _movementSpeedHolder;
+                    _cs.jump = _jumpHolder;
                     _isAllowed = true;
                     _isRunning = true;
                     if (_stoneColor != null)
