@@ -75,7 +75,7 @@ namespace RikusCardpack.MonoBehaviours
                 _noRegenDurationLeft -= TimeHandler.deltaTime;
                 if (_cd.health > 1.1f)
                 {
-                    Vector2 _damage = new Vector2(Mathf.Sqrt(_cd.health * _cd.health) / 2 - Mathf.Sqrt(2) / 2, Mathf.Sqrt(_cd.health * _cd.health) / 2 - Mathf.Sqrt(2) / 2);
+                    Vector2 _damage = new Vector2(Mathf.Sqrt(_cd.health * _cd.health / 2) - Mathf.Sqrt(0.5f), Mathf.Sqrt(_cd.health * _cd.health / 2) - Mathf.Sqrt(0.5f));
                     Vector2 _position = new Vector2(_p.transform.position.x, _p.transform.position.y);
                     _cd.healthHandler.DoDamage(_damage, _position, Color.white, null, null, false, false, true);
                 }
