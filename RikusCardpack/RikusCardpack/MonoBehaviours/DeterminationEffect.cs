@@ -10,6 +10,8 @@ using UnboundLib.Cards;
 using UnityEngine;
 using UnboundLib.GameModes;
 using ModdingUtils.MonoBehaviours;
+using HarmonyLib;
+using RikusCardpack.Extensions;
 
 namespace RikusCardpack.MonoBehaviours
 {
@@ -22,13 +24,11 @@ namespace RikusCardpack.MonoBehaviours
         private Block _b;
         private CharacterData _cd;
         private RedColor _redColor = null;
-        private PerseveranceEffect _thisPerseveranceEffect = null;
         private bool _ranOnce = false;
         private bool _happen = true;
         private bool _isRunning = true;
         private bool _skip = false;
         private bool _statsAdded = false;
-        private bool _skipDealt = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 4f;
@@ -115,31 +115,21 @@ namespace RikusCardpack.MonoBehaviours
         }
         private void OnDealtDamage(Vector2 damage, bool selfDamage)
         {
-            _thisPerseveranceEffect = _p.gameObject.GetComponent<PerseveranceEffect>();
-            if (_thisPerseveranceEffect != null && _thisPerseveranceEffect._durationLeft > 0 && !_thisPerseveranceEffect._skipDetermination)
-            {
-                _skipDealt = true;
-            }
-            if (_cd.health <= 0 && _durationLeft <= 0 && _cs.remainingRespawns <= 0 && !_skipDealt)
-            {
-                _cd.healthHandler.Heal(_cd.health * -1 + _cd.maxHealth);
-                _redColor = _p.gameObject.GetOrAddComponent<RedColor>();
-                _durationLeft = _duration + (_stackCount - 1) * _durationOnStack;
-            }
-            else if (_durationLeft > 0)
+            if (_durationLeft > 0)
             {
                 _cd.healthHandler.Heal(damage.magnitude * 0.5f);
             }
-            if (_thisPerseveranceEffect != null && _thisPerseveranceEffect._durationLeft > 0 && _thisPerseveranceEffect._skipDetermination)
-            {
-                _thisPerseveranceEffect._skipDetermination = false;
-            }
-            _thisPerseveranceEffect = null;
-            _skipDealt = false;
+        }
+        public void OnDeath()
+        {
+            _cd.healthHandler.Heal(_cd.maxHealth + _cd.health * -1);
+            _redColor = _p.gameObject.GetOrAddComponent<RedColor>();
+            _durationLeft = _duration + (_stackCount - 1) * _durationOnStack;
         }
         private void OnRevive()
         {
             ReverseStats(true);
+            _cs.GetAdditionalData().skipDiePatch = false;
         }
         private void AddStats()
         {
@@ -175,7 +165,7 @@ namespace RikusCardpack.MonoBehaviours
         }
         private void ReverseStats(bool skip = false)
         {
-            if (!_skip && _statsAdded)
+            if (_statsAdded)
             {
                 _cs.movementSpeed -= _givenSpeed;
                 _cs.jump -= _givenJump;
@@ -191,23 +181,10 @@ namespace RikusCardpack.MonoBehaviours
                 }
                 _statsAdded = false;
             }
-            else if (_statsAdded)
+            if (_statsAdded && _skip)
             {
-                _cs.movementSpeed -= _givenSpeed;
-                _cs.jump -= _givenJump;
-                _g.bulletDamageMultiplier -= _givenDamage;
-                _g.projectileSpeed -= _givenProjectileSpeed;
-                _b.cdMultiplier -= _givenBlockSpeed;
-                _g.attackSpeedMultiplier -= _givenAttackSpeed;
-                _ga.reloadTimeMultiplier -= _givenReloadSpeed;
-                if (_redColor != null)
-                {
-                    Destroy(_redColor);
-                    _redColor = null;
-                }
                 _durationLeft = 0.05f;
                 _skip = true;
-                _statsAdded = false;
             }
         }
         static IEnumerator OnGameEnd(IGameModeHandler gm)
@@ -221,7 +198,6 @@ namespace RikusCardpack.MonoBehaviours
             if (_stackCount < 1)
             {
                 ReverseStats(true);
-                _cs.WasDealtDamageAction -= OnDealtDamage;
                 _cd.healthHandler.reviveAction -= OnRevive;
 
                 Destroy(this);

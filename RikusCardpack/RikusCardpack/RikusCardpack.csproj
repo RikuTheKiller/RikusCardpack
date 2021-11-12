@@ -79,6 +79,7 @@
     <Compile Include="Cards\Autoloader.cs" />
     <Compile Include="Cards\SugarRush.cs" />
     <Compile Include="Cards\Determination.cs" />
+    <Compile Include="Extensions\CharacterStatModifiers.cs" />
     <Compile Include="HitEffects\PetrifyingHitEffect.cs" />
     <Compile Include="HitEffects\InstaKillHitEffect.cs" />
     <Compile Include="MonoBehaviours\BadMathEffect.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="MonoBehaviours\TemplateEffect.cs" />
     <Compile Include="MonoBehaviours\SniperLogicEffect.cs" />
     <Compile Include="MonoBehaviours\RiskyShotEffect.cs" />
+    <Compile Include="Patches\HealthHandlerDiePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RikusCardpack.cs" />
     <Compile Include="Cards\Template.cs" />
