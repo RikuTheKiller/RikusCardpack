@@ -181,7 +181,7 @@ namespace RikusCardpack.MonoBehaviours
                 }
                 _statsAdded = false;
             }
-            if (_statsAdded && _skip)
+            if (_statsAdded && skip)
             {
                 _durationLeft = 0.05f;
                 _skip = true;
