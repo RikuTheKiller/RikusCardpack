@@ -27,11 +27,7 @@ namespace RikusCardpack.MonoBehaviours
         {
             if (_ranOnce)
             {
-                _g.damage -= _givenDamage;
-                _givenDamage = 0;
-                _g.projectileSpeed -= _givenProjectileSpeed;
-                _givenProjectileSpeed = 0;
-                _lastReloadTime = 0;
+                ReverseStats();
                 _stackCount += 1;
 
                 return;
@@ -53,22 +49,7 @@ namespace RikusCardpack.MonoBehaviours
             }
             if (_lastReloadTime != (_ga.reloadTime + _ga.reloadTimeAdd) * _ga.reloadTimeMultiplier)
             {
-                _reloadTime = (_ga.reloadTime + _ga.reloadTimeAdd) * _ga.reloadTimeMultiplier;
-                _g.bulletDamageMultiplier += (_reloadTime - _lastReloadTime) * 15f * _stackCount / 55 / _g.damage;
-                _givenDamage += _g.bulletDamageMultiplier - (_g.bulletDamageMultiplier - _givenDamage);
-                if (_givenDamage < 0)
-                {
-                    _g.damage -= _givenDamage;
-                    _givenDamage = 0;
-                }
-                _g.projectileSpeed += (_reloadTime - _lastReloadTime) * _stackCount * 0.333f;
-                _givenProjectileSpeed += _g.projectileSpeed - (_g.projectileSpeed - _givenProjectileSpeed);
-                if (_givenProjectileSpeed < 0)
-                {
-                    _g.projectileSpeed -= _givenProjectileSpeed;
-                    _givenProjectileSpeed = 0;
-                }
-                _lastReloadTime = _reloadTime;
+                AddStats();
             }
             if (_forceDestroy)
             {
@@ -78,6 +59,33 @@ namespace RikusCardpack.MonoBehaviours
                 }
             }
         }
+        private void AddStats()
+        {
+            _reloadTime = (_ga.reloadTime + _ga.reloadTimeAdd) * _ga.reloadTimeMultiplier;
+            _g.bulletDamageMultiplier += (_reloadTime - _lastReloadTime) * 15f * _stackCount / 55 / _g.damage;
+            _g.projectileSpeed += (_reloadTime - _lastReloadTime) * _stackCount * 0.333f;
+            _givenDamage -= _g.bulletDamageMultiplier - (_g.bulletDamageMultiplier - (_reloadTime - _lastReloadTime) * 15f * _stackCount / 55 / _g.damage);
+            _givenProjectileSpeed -= _g.projectileSpeed - (_g.bulletDamageMultiplier - (_reloadTime - _lastReloadTime) * _stackCount * 0.333f);
+            if (_givenDamage < 0)
+            {
+                _g.damage -= _givenDamage;
+                _givenDamage = 0;
+            }
+            if (_givenProjectileSpeed < 0)
+            {
+                _g.projectileSpeed -= _givenProjectileSpeed;
+                _givenProjectileSpeed = 0;
+            }
+            _lastReloadTime = _reloadTime;
+        }
+        private void ReverseStats()
+        {
+            _g.damage -= _givenDamage;
+            _g.projectileSpeed -= _givenProjectileSpeed;
+            _givenDamage = 0;
+            _givenProjectileSpeed = 0;
+            _lastReloadTime = 0;
+        }
         static IEnumerator OnGameEnd(IGameModeHandler gm)
         {
             _forceDestroy = true;
@@ -85,11 +93,7 @@ namespace RikusCardpack.MonoBehaviours
         }
         public void RunRemover()
         {
-            _g.damage -= _givenDamage;
-            _givenDamage = 0;
-            _g.projectileSpeed -= _givenProjectileSpeed;
-            _givenProjectileSpeed = 0;
-            _lastReloadTime = 0;
+            ReverseStats();
             _stackCount -= 1;
             if (_stackCount < 1)
             {

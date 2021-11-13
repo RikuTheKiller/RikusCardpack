@@ -17,7 +17,7 @@ namespace RikusCardpack.Cards
             UnityEngine.Debug.Log($"[{RikusCardpack.ModInitials}][Card] {GetTitle()} has been setup.");
 
             gun.bulletDamageMultiplier = 0.9f;
-            gun.reloadTimeAdd = 1;
+            gun.reloadTimeAdd = 0.75f;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -79,7 +79,7 @@ namespace RikusCardpack.Cards
                 {
                     positive = false,
                     stat = "Reload Time",
-                    amount = "+1s",
+                    amount = "+0.75s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };

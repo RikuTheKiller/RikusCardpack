@@ -19,6 +19,7 @@ namespace RikusCardpack.MonoBehaviours
         private bool _happen = true;
         private bool _isRunning = true;
         private bool _skip = false;
+        private bool _statsAdded = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private const float _duration = 1.5f;
@@ -63,18 +64,11 @@ namespace RikusCardpack.MonoBehaviours
                 _durationLeft -= TimeHandler.deltaTime;
                 if (_isRunning)
                 {
-                    _givenSpeed = _cs.movementSpeed;
-                    _givenJump = _cs.jump;
-                    _cs.movementSpeed *= 1.7f + (_stackCount - 1) * 0.7f;
-                    _cs.jump *= 1.3f + (_stackCount - 1) * 0.3f;
-                    _givenSpeed = (_givenSpeed - _cs.movementSpeed) * -1;
-                    _givenJump = (_givenJump - _cs.jump) * -1;
-                    _isRunning = false;
+                    AddStats();
                 }
                 if (_durationLeft <= 0 && !_skip)
                 {
-                    _cs.movementSpeed -= _givenSpeed;
-                    _cs.jump -= _givenJump;
+                    ReverseStats();
                     _isRunning = true;
                 }
                 else if (_durationLeft <= 0)
@@ -91,19 +85,40 @@ namespace RikusCardpack.MonoBehaviours
                 }
             }
         }
+        private void AddStats()
+        {
+            if (!_statsAdded)
+            {
+                _cs.movementSpeed *= 1.7f + (_stackCount - 1) * 0.7f;
+                _cs.jump *= 1.3f + (_stackCount - 1) * 0.3f;
+                _givenSpeed += _cs.movementSpeed - _cs.movementSpeed / (1.7f + (_stackCount - 1) * 0.7f);
+                _givenJump += _cs.jump - _cs.jump / (1.3f + (_stackCount - 1) * 0.3f);
+                _statsAdded = true;
+            }
+        }
+        private void ReverseStats(bool skip = false)
+        {
+            if (_statsAdded)
+            {
+                _cs.movementSpeed -= _givenSpeed;
+                _cs.jump -= _givenJump;
+                _givenSpeed = 0;
+                _givenJump = 0;
+                if (skip)
+                {
+                    _durationLeft = 0.05f;
+                    _skip = true;
+                }
+                _statsAdded = false;
+            }
+        }
         private void OnBlock(BlockTrigger.BlockTriggerType obj)
         {
             _durationLeft = _duration;
         }
         private void OnRevive()
         {
-            if (_durationLeft > 0)
-            {
-                _cs.movementSpeed -= _givenSpeed;
-                _cs.jump -= _givenJump;
-                _durationLeft = 0.05f;
-                _skip = true;
-            }
+            ReverseStats(true);
         }
         static IEnumerator OnGameEnd(IGameModeHandler gm)
         {
@@ -112,13 +127,7 @@ namespace RikusCardpack.MonoBehaviours
         }
         public void RunRemover()
         {
-            if (_durationLeft > 0)
-            {
-                _cs.movementSpeed -= _givenSpeed;
-                _cs.jump -= _givenJump;
-                _durationLeft = 0.05f;
-                _skip = true;
-            }
+            ReverseStats(true);
             _stackCount -= 1;
             if (_stackCount < 1)
             {

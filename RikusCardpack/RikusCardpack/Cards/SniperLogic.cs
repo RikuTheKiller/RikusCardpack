@@ -69,7 +69,7 @@ namespace RikusCardpack.Cards
                 {
                     positive = true,
                     stat = "Default Projectile Speed",
-                    amount = "1/3x",
+                    amount = "+33.3%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };

@@ -100,11 +100,6 @@ namespace RikusCardpack.MonoBehaviours
                     _skip = false;
                 }
             }
-            if (!_statsAdded && _durationLeft > 0 && !_skip)
-            {
-                _durationLeft = 0.05f;
-                _skip = true;
-            }
             if (_forceDestroy)
             {
                 if (_stackCount > 0)
@@ -139,13 +134,6 @@ namespace RikusCardpack.MonoBehaviours
                 {
                     _b.ResetCD(true);
                 }
-                _givenSpeed = _cs.movementSpeed;
-                _givenJump = _cs.jump;
-                _givenDamage = _g.damage;
-                _givenProjectileSpeed = _g.projectileSpeed;
-                _givenBlockSpeed = _b.cdMultiplier;
-                _givenAttackSpeed = _g.attackSpeedMultiplier;
-                _givenReloadSpeed = _ga.reloadTimeMultiplier;
                 _cs.movementSpeed *= 2f;
                 _cs.jump *= 1.5f;
                 _g.bulletDamageMultiplier *= 1.5f;
@@ -153,13 +141,13 @@ namespace RikusCardpack.MonoBehaviours
                 _b.cdMultiplier *= 0.5f;
                 _g.attackSpeedMultiplier *= 1.3f;
                 _ga.reloadTimeMultiplier *= 0.5f;
-                _givenSpeed = (_givenSpeed - _cs.movementSpeed) * -1;
-                _givenJump = (_givenJump - _cs.jump) * -1;
-                _givenDamage = (_givenDamage - _g.bulletDamageMultiplier) * -1;
-                _givenProjectileSpeed = (_givenProjectileSpeed - _g.projectileSpeed) * -1;
-                _givenBlockSpeed = (_givenBlockSpeed - _b.cdMultiplier) * -1;
-                _givenAttackSpeed = (_givenAttackSpeed - _g.attackSpeedMultiplier) * -1;
-                _givenReloadSpeed = (_givenReloadSpeed - _ga.reloadTimeMultiplier) * -1;
+                _givenSpeed += _cs.movementSpeed - _cs.movementSpeed / 2f;
+                _givenJump += _cs.jump - _cs.jump / 1.5f;
+                _givenDamage += _g.bulletDamageMultiplier - _g.bulletDamageMultiplier / 1.5f;
+                _givenProjectileSpeed += _g.projectileSpeed - _g.projectileSpeed / 1.5f;
+                _givenBlockSpeed += _b.cdMultiplier - _b.cdMultiplier / 0.5f;
+                _givenAttackSpeed += _g.attackSpeedMultiplier - _g.attackSpeedMultiplier / 1.3f;
+                _givenReloadSpeed += _ga.reloadTimeMultiplier - _ga.reloadTimeMultiplier / 0.5f;
                 _statsAdded = true;
             }
         }
@@ -174,17 +162,24 @@ namespace RikusCardpack.MonoBehaviours
                 _b.cdMultiplier -= _givenBlockSpeed;
                 _g.attackSpeedMultiplier -= _givenAttackSpeed;
                 _ga.reloadTimeMultiplier -= _givenReloadSpeed;
+                _givenSpeed = 0;
+                _givenJump = 0;
+                _givenDamage = 0;
+                _givenProjectileSpeed = 0;
+                _givenBlockSpeed = 0;
+                _givenAttackSpeed = 0;
+                _givenReloadSpeed = 0;
                 if (_redColor != null)
                 {
                     Destroy(_redColor);
                     _redColor = null;
                 }
                 _statsAdded = false;
-            }
-            if (_statsAdded && skip)
-            {
-                _durationLeft = 0.05f;
-                _skip = true;
+                if (skip)
+                {
+                    _durationLeft = 0.05f;
+                    _skip = true;
+                }
             }
         }
         static IEnumerator OnGameEnd(IGameModeHandler gm)
