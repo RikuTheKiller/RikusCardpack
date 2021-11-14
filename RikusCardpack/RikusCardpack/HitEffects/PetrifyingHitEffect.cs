@@ -10,7 +10,7 @@ namespace RikusCardpack.HitEffects
     public class PetrifyingHitEffect : HitEffect
     {
         private bool _ranOnce = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         private float _t = 1;
@@ -25,16 +25,12 @@ namespace RikusCardpack.HitEffects
             }
             _ranOnce = true;
         }
-        void Start()
-        {
-            _happen = false;
-        }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_forceDestroy)
             {

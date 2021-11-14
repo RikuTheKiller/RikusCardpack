@@ -17,7 +17,7 @@ namespace RikusCardpack.MonoBehaviours
         private GunAmmo _ga;
         private Player _p;
         private bool _ranOnce = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
         public void RunAdder(GunAmmo ga, Player p)
@@ -34,16 +34,12 @@ namespace RikusCardpack.MonoBehaviours
 
             _p.data.stats.OutOfAmmpAction += OnReload;
         }
-        void Start()
-        {
-            _happen = false;
-        }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_forceDestroy)
             {

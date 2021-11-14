@@ -10,9 +10,11 @@ namespace RikusCardpack.Extensions
     public class CharacterStatModifiersAdditionalData
     {
         public bool skipDiePatch;
+        public bool inDetermination;
         public CharacterStatModifiersAdditionalData()
         {
             skipDiePatch = false;
+            inDetermination = false;
         }
     }
     public static class CharacterStatModifiersExtension
@@ -42,6 +44,7 @@ namespace RikusCardpack.Extensions
         private static void Prefix(CharacterStatModifiers __instance)
         {
             __instance.GetAdditionalData().skipDiePatch = false;
+            __instance.GetAdditionalData().inDetermination = false;
         }
     }
 }

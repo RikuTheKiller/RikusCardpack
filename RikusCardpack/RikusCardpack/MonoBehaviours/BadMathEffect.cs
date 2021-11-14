@@ -18,7 +18,7 @@ namespace RikusCardpack.MonoBehaviours
         private Gun _g;
         private GunAmmo _ga;
         private bool _ranOnce;
-        private bool _happen = true;
+        private bool _initialized = false;
         private static bool _forceDestroy = false;
         private static bool _disable = true;
         private int _timesGet = 1;
@@ -40,7 +40,6 @@ namespace RikusCardpack.MonoBehaviours
         }
         void Start()
         {
-            _happen = false;
             if (GM_Test.instance != null && GM_Test.instance.gameObject.activeInHierarchy)
             {
                 _disable = false;
@@ -48,12 +47,12 @@ namespace RikusCardpack.MonoBehaviours
         }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookPointStart, OnPointStart);
                 GameModeManager.AddHook(GameModeHooks.HookPointEnd, OnPointEnd);
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_forceDestroy)
             {

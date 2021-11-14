@@ -21,7 +21,7 @@ namespace RikusCardpack.MonoBehaviours
         private CharacterData _cd;
         private PurpleColor _purpleColor = null;
         private bool _ranOnce = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         public bool _skipDetermination = false;
         private static bool _forceDestroy = false;
         private int _stackCount = 1;
@@ -46,16 +46,12 @@ namespace RikusCardpack.MonoBehaviours
             _p.data.healthHandler.reviveAction += OnRevive;
             _p.data.stats.WasDealtDamageAction += OnDealtDamage;
         }
-        void Start()
-        {
-            _happen = false;
-        }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_cooldownLeft > 0)
             {

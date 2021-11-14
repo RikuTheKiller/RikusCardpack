@@ -16,7 +16,7 @@ namespace RikusCardpack.MonoBehaviours
         private Player _p;
         private CharacterStatModifiers _cs;
         private bool _ranOnce = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         private bool _isRunning = true;
         private bool _skip = false;
         private bool _statsAdded = false;
@@ -48,16 +48,12 @@ namespace RikusCardpack.MonoBehaviours
             _p.data.block.BlockAction += OnBlock;
             _p.data.healthHandler.reviveAction += OnRevive;
         }
-        void Start()
-        {
-            _happen = false;
-        }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_durationLeft > 0)
             {

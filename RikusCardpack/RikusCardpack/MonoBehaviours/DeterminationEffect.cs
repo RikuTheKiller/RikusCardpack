@@ -25,7 +25,7 @@ namespace RikusCardpack.MonoBehaviours
         private CharacterData _cd;
         private RedColor _redColor = null;
         private bool _ranOnce = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         private bool _isRunning = true;
         private bool _skip = false;
         private bool _statsAdded = false;
@@ -60,16 +60,12 @@ namespace RikusCardpack.MonoBehaviours
             _p.data.stats.WasDealtDamageAction += OnDealtDamage;
             _p.data.healthHandler.reviveAction += OnRevive;
         }
-        void Start()
-        {
-            _happen = false;
-        }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_durationLeft > 0)
             {
@@ -82,6 +78,7 @@ namespace RikusCardpack.MonoBehaviours
                 if (_durationLeft <= 0 && !_skip)
                 {
                     ReverseStats();
+                    _cs.GetAdditionalData().skipDiePatch = true;
                     Unbound.Instance.ExecuteAfterSeconds(0f, () =>
                     {
                         typeof(HealthHandler).InvokeMember(
@@ -124,6 +121,7 @@ namespace RikusCardpack.MonoBehaviours
         private void OnRevive()
         {
             ReverseStats(true);
+            _cs.GetAdditionalData().inDetermination = false;
             _cs.GetAdditionalData().skipDiePatch = false;
         }
         private void AddStats()

@@ -26,7 +26,7 @@ namespace RikusCardpack.MonoBehaviours
         private bool _ranOnce = false;
         private bool _isRunning = false;
         private bool _hasRevived = false;
-        private bool _happen = true;
+        private bool _initialized = false;
         private static bool _forceDestroy = false;
         private Block _b;
         private Gun _g;
@@ -56,15 +56,14 @@ namespace RikusCardpack.MonoBehaviours
         }
         void Start()
         {
-            _happen = false;
             _thisIKHE = _p.gameObject.GetOrAddComponent<HitEffects.InstaKillHitEffect>();
         }
         void Update()
         {
-            if (!_happen)
+            if (!_initialized)
             {
                 GameModeManager.AddHook(GameModeHooks.HookGameEnd, OnGameEnd);
-                _happen = true;
+                _initialized = true;
             }
             if (_cooldownLeft > 0)
             {

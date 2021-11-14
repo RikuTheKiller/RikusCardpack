@@ -14,10 +14,14 @@ namespace RikusCardpack.Patches
             CharacterData _cd = (CharacterData)Traverse.Create(__instance).Field("data").GetValue();
             Player _p = _cd.player;
             DeterminationEffect _thisDeterminationEffect = _p.gameObject.GetComponent<DeterminationEffect>();
-            if (_thisDeterminationEffect != null && !_cd.stats.GetAdditionalData().skipDiePatch)
+            if (_thisDeterminationEffect != null && !_cd.stats.GetAdditionalData().inDetermination)
             {
-                _cd.stats.GetAdditionalData().skipDiePatch = true;
+                _cd.stats.GetAdditionalData().inDetermination = true;
                 _thisDeterminationEffect.OnDeath();
+                return false;
+            }
+            else if (_thisDeterminationEffect != null && _cd.health > 0 && !_cd.stats.GetAdditionalData().skipDiePatch)
+            {
                 return false;
             }
             else
