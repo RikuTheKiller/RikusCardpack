@@ -97,6 +97,10 @@ namespace RikusCardpack.MonoBehaviours
                     _skip = false;
                 }
             }
+            if (_statsAdded && _durationLeft <= 0)
+            {
+                ReverseStats();
+            }
             if (_forceDestroy)
             {
                 if (_stackCount > 0)

@@ -15,6 +15,7 @@ namespace RikusCardpack.MonoBehaviours
     {
         private Player _p;
         private CharacterStatModifiers _cs;
+        private CharacterData _cd;
         private bool _ranOnce = false;
         private bool _initialized = false;
         private bool _isRunning = true;
@@ -26,7 +27,7 @@ namespace RikusCardpack.MonoBehaviours
         private float _durationLeft = 0;
         private float _givenSpeed = 0;
         private float _givenJump = 0;
-        public void RunAdder(Player p, CharacterStatModifiers cs)
+        public void RunAdder(Player p, CharacterStatModifiers cs, CharacterData cd)
         {
             if (_ranOnce)
             {
@@ -43,10 +44,12 @@ namespace RikusCardpack.MonoBehaviours
             }
             _p = p;
             _cs = cs;
+            _cd = cd;
             _ranOnce = true;
 
             _p.data.block.BlockAction += OnBlock;
             _p.data.healthHandler.reviveAction += OnRevive;
+            _p.data.stats.WasDealtDamageAction += OnDealtDamage;
         }
         void Update()
         {
@@ -72,6 +75,10 @@ namespace RikusCardpack.MonoBehaviours
                     _skip = false;
                     _isRunning = true;
                 }
+            }
+            if (_statsAdded && _durationLeft <= 0)
+            {
+                ReverseStats();
             }
             if (_forceDestroy)
             {
@@ -106,6 +113,13 @@ namespace RikusCardpack.MonoBehaviours
                     _skip = true;
                 }
                 _statsAdded = false;
+            }
+        }
+        private void OnDealtDamage(Vector2 damage, bool selfDamage)
+        {
+            if (_durationLeft > 0)
+            {
+                _cd.healthHandler.Heal(damage.magnitude * Mathf.Clamp(0.1f + (_stackCount - 1) * 0.1f, 0.1f, 0.5f));
             }
         }
         private void OnBlock(BlockTrigger.BlockTriggerType obj)

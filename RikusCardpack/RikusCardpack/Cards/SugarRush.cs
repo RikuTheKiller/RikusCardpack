@@ -26,7 +26,7 @@ namespace RikusCardpack.Cards
 
             var thisEffect = player.gameObject.GetOrAddComponent<SugarRushEffect>();
 
-            thisEffect.RunAdder(player, characterStats);
+            thisEffect.RunAdder(player, characterStats, data);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -45,7 +45,7 @@ namespace RikusCardpack.Cards
         }
         protected override string GetDescription()
         {
-            return "Blocking gives you +70% speed and +30% jump for 1.5s.";
+            return "Blocking gives you +70% speed, +10% damage resistance and +30% jump for 1.5s.";
         }
         protected override GameObject GetCardArt()
         {
@@ -53,7 +53,7 @@ namespace RikusCardpack.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Common;
+            return CardInfo.Rarity.Uncommon;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -64,6 +64,13 @@ namespace RikusCardpack.Cards
                     positive = false,
                     stat = "Block Cooldown",
                     amount = "+0.25s",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Max Damage Reduction",
+                    amount = "50%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };
